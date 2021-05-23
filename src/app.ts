@@ -53,7 +53,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use("/auth", authRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("Server running");
+    res.send("Server is running");
 });
 
 app.use(
