@@ -1,20 +1,20 @@
 interface InputValidatorErrorObject {
-    hasError: boolean;
-    errors: string[];
+  hasError: boolean
+  errors: string[]
 }
 export const inputValidator = (inputs: any[]) => {
-  let hasError = false;
+  let hasError = false
   let finalErrorsObject: InputValidatorErrorObject = {
     hasError: false,
     errors: [],
-  };
-  const errors: string[] = [];
+  }
+  const errors: string[] = []
   for (let i = 0; i < inputs.length; i++) {
     if (
       inputs[i].validations.includes("required") &&
       inputs[i].fieldValue.length === 0
     ) {
-      errors.push(`${inputs[i].fieldName} required`);
+      errors.push(`${inputs[i].fieldName} required`)
     }
     if (
       inputs[i].validations.includes("minLength") &&
@@ -22,7 +22,7 @@ export const inputValidator = (inputs: any[]) => {
     ) {
       errors.push(
         `${inputs[i].fieldName} minimum length is ${inputs[i].minLength}`
-      );
+      )
     }
     if (
       inputs[i].validations.includes("maxLength") &&
@@ -30,22 +30,22 @@ export const inputValidator = (inputs: any[]) => {
     ) {
       errors.push(
         `${inputs[i].fieldName} maximum length is ${inputs[i].maxLength}`
-      );
+      )
     }
 
-    if (errors.length > 0) hasError = true;
+    if (errors.length > 0) hasError = true
   }
-  finalErrorsObject.hasError = hasError;
-  finalErrorsObject.errors = errors;
-  return finalErrorsObject;
-};
+  finalErrorsObject.hasError = hasError
+  finalErrorsObject.errors = errors
+  return finalErrorsObject
+}
 
 const errorObjectBuilder = (fieldName: string, errors: string[]) => {
   const errorsObject = {
     [fieldName]: {
       errors: errors,
     },
-  };
+  }
 
-  return errorsObject;
-};
+  return errorsObject
+}
