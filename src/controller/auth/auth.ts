@@ -3,6 +3,7 @@ import {
   PLAYER_EMAIL_MAX,
   PLAYER_PASSWORD_MIN,
   PLAYER_PASSWORD_MAX,
+  DEFAULT_PROFILE_IMAGE,
 } from "./../../utility/constants/playerConstants"
 import { IPlayer } from "./../../models/auth/Player"
 import express, { Request, Response, NextFunction } from "express"
@@ -19,9 +20,12 @@ export const signup = async (
   res: Response,
   next: NextFunction
 ) => {
-  const name = req.body.Name
+  const firstName = req.body.FirstName
+  const lastName = req.body.LastName
   const email = req.body.Email
   const password = req.body.Password
+  const address = req.body.Address
+  const phone = req.body.Phone
 
   try {
     const playerExists = await Player.findOne({ Email: email })
@@ -33,9 +37,16 @@ export const signup = async (
       )
       console.log(process.env.PASSWORD_SALT)
       const player = new Player({
-        Name: name,
+        FirstName: firstName,
+        LastName: lastName,
         Email: email,
         Password: hashedPw,
+        Address: address,
+        Phone: phone,
+        Wallet: 0,
+        ProfileImageUrl: DEFAULT_PROFILE_IMAGE,
+        RegisteredEvents: [],
+        InterestedEvents: [],
       })
       const result = await player.save()
 
@@ -53,7 +64,6 @@ export const signup = async (
         return res.status(201).json({
           IsSuccess: true,
           Result: {
-            Username: result.Name,
             UserId: result._id,
             Token: token,
           },
@@ -143,7 +153,6 @@ export const login = async (
       return res.status(200).json({
         IsSuccess: true,
         Result: {
-          Username: loggedInUser.Name,
           UserId: loggedInUser._id,
           Token: token,
         },
