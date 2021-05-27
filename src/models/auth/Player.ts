@@ -1,4 +1,7 @@
-import { ADDRESS_MIN_LENGTH, PHONE_MIN_LENGTH } from './../../utility/constants/playerConstants';
+import {
+  ADDRESS_MIN_LENGTH,
+  PHONE_MIN_LENGTH,
+} from "./../../utility/constants/playerConstants"
 import mongoose from "mongoose"
 import {
   PLAYER_NAME_MAX,
@@ -10,65 +13,65 @@ import {
 } from "../../utility/constants/playerConstants"
 
 export interface IPlayer extends mongoose.Document {
-  FirstName: string;
-  LastName: string
-  Email: string;
-  Password: string;
-  Address: string;
-  Phone: string;
-  Wallet: number;
-  ProfileImageUrl: string;
-  RegisteredEvents: string[];
-  InterestedEvents: string[];
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  address: string
+  phone: string
+  wallet: number
+  profileImageUrl: string
+  registeredEvents: string[]
+  interestedEvents: string[]
 }
 
 export const PlayerSchema = new mongoose.Schema({
-  FirstName: {
+  firstName: {
     type: String,
     required: [true, "First Name required"],
     minLength: [PLAYER_NAME_MIN, `Minimum length ${PLAYER_NAME_MIN}`],
     maxLength: [PLAYER_NAME_MAX, `Maximum length ${PLAYER_NAME_MAX}`],
   },
-  LastName: {
+  lastName: {
     type: String,
     required: [true, "Last Name required"],
     minLength: [PLAYER_NAME_MIN, `Minimum length ${PLAYER_NAME_MIN}`],
     maxLength: [PLAYER_NAME_MAX, `Maximum length ${PLAYER_NAME_MAX}`],
   },
-  Email: {
+  email: {
     type: String,
     required: [true, "Email required"],
     minLength: [PLAYER_EMAIL_MIN, `Minimum length ${PLAYER_EMAIL_MIN}`],
     maxLength: [PLAYER_EMAIL_MAX, `Maximum length ${PLAYER_EMAIL_MAX}`],
   },
-  Password: {
+  password: {
     type: String,
     required: [true, "Password required"],
     minLength: [PLAYER_PASSWORD_MIN, `Minimum length ${PLAYER_PASSWORD_MIN}`],
   },
-  Address: {
+  address: {
     type: String,
     required: [true, "Address required"],
     minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
   },
-  Phone: {
+  phone: {
     type: String,
     required: [true, "Phone number required"],
     minLength: [PHONE_MIN_LENGTH, `Minimum length ${PHONE_MIN_LENGTH}`],
   },
-  Wallet: {
+  wallet: {
     type: Number,
     required: [true, "Wallet required"],
   },
-  ProfileImageUrl: {
+  profileImageUrl: {
     type: String,
     required: [true, "Profile Image Required required"],
   },
-  RegisteredEvents: {
+  registeredEvents: {
     type: [String],
     required: [true, "Registered events required"],
   },
-  InterestedEvents: {
+  interestedEvents: {
     type: [String],
     required: [true, "Interested events required"],
   },

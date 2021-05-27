@@ -12,60 +12,60 @@ import {
 import mongoose from "mongoose"
 
 export interface IArena extends mongoose.Document {
-  ArenaName: string
-  Email: string
-  Password: string
-  Address: string
-  Phone: string
-  Location: [number]
-  MonthlyFee: number
-  ArenaImageUrl: string
-  BankAccount: string
+  aenaName: string
+  email: string
+  password: string
+  address: string
+  phone: string
+  location: [number]
+  monthlyFee: number
+  arenaImageUrl: string
+  bankAccount: string
 }
 
 export const ArenaSchema = new mongoose.Schema({
-  ArenaName: {
+  arenaName: {
     type: String,
     requried: [true, "Arena name required"],
     minLength: [ARENA_NAME_MIN, `Minimum length ${ARENA_NAME_MIN}`],
     maxLength: [ARENA_NAME_MAX, `Minimum length ${ARENA_NAME_MAX}`],
   },
-  Email: {
+  email: {
     type: String,
     requried: [true, "Email required"],
     minLength: [ARENA_EMAIL_MIN, `Minimum length ${ARENA_EMAIL_MIN}`],
     maxLength: [ARENA_EMAIL_MAX, `Minimum length ${ARENA_EMAIL_MAX}`],
   },
-  Password: {
+  password: {
     type: String,
     requried: [true, "Password required"],
     minLength: [ARENA_PASSWORD_MIN, `Minimum length ${ARENA_PASSWORD_MIN}`],
     maxLength: [ARENA_PASSWORD_MAX, `Minimum length ${ARENA_PASSWORD_MAX}`],
   },
-  Address: {
+  address: {
     type: String,
     requried: [true, "Arena address required"],
     minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
   },
-  Phone: {
+  phone: {
     type: String,
     requried: [true, "Phone number required"],
     minLength: [PHONE_MIN_LENGTH, `Minimum length ${PHONE_MIN_LENGTH}`],
   },
-  Location: {
+  location: {
     type: [Number],
     requried: [true, "Precise location required"],
   },
-  MonthlyFee: {
+  monthlyFee: {
     type: Number,
     requried: [true, "Monthly fee required"],
     minValue: [MONTHLY_FEE_MIN, `Minimum length ${MONTHLY_FEE_MIN}`],
   },
-  ArenaImageUrl: {
+  arenaImageUrl: {
     type: String,
     required: [true, "Arena Image Required required"],
   },
-  BankAccount: {
+  bankAccount: {
     type: String,
     required: [true, "IBAN required"],
   },

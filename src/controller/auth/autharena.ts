@@ -25,14 +25,14 @@ export const signup = async (
   res: Response,
   next: NextFunction
 ) => {
-  const arenaName = req.body.ArenaName
-  const email = req.body.Email
-  const password = req.body.Password
-  const address = req.body.Address
-  const phone = req.body.Phone
+  const arenaName = req.body.arenaName
+  const email = req.body.email
+  const password = req.body.password
+  const address = req.body.address
+  const phone = req.body.phone
 
   try {
-    const arenaExists = await Arena.findOne({ Email: email })
+    const arenaExists = await Arena.findOne({ email: email })
 
     if (!arenaExists) {
       const hashedPw = await bcryptjs.hash(
@@ -41,22 +41,22 @@ export const signup = async (
       )
       console.log(process.env.PASSWORD_SALT)
       const arena = new Arena({
-        ArenaName: arenaName,
-        Email: email,
-        Password: hashedPw,
-        Address: address,
-        Phone: phone,
-        Location: [],
-        MonthlyFee: MONTHLY_FEE_MIN,
-        ArenaImageUrl: DEFAULT_PROFILE_IMAGE,
-        BankAccount: " ",
+        arenaName,
+        email,
+        hashedPw,
+        address,
+        phone,
+        location: [],
+        monthlyFee: MONTHLY_FEE_MIN,
+        arenaImageUrl: DEFAULT_PROFILE_IMAGE,
+        bankAccount: " ",
       })
       const result = await arena.save()
 
       if (result) {
         const token = jsonwebtoken.sign(
           {
-            UserId: result._id.toString(),
+            userId: result._id.toString(),
           },
           process.env.TOKEN_KEY as string,
           {
@@ -65,21 +65,21 @@ export const signup = async (
         )
 
         return res.status(201).json({
-          IsSuccess: true,
+          success: true,
           Result: {
-            UserId: result._id,
-            Token: token,
+            userId: result._id,
+            token: token,
           },
         })
       } else {
         return res.status(201).json({
-          IsSuccess: false,
+          success: false,
           Errors: ["Could not create an arena account"],
         })
       }
     } else {
       return res.status(422).json({
-        IsSuccess: false,
+        success: false,
         Errors: ["Arena account already exists."],
       })
     }
@@ -96,8 +96,8 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-  const email = req.body.Email
-  const password = req.body.Password
+  const email = req.body.email
+  const password = req.body.password
 
   let loggedInUser: IArena
   let isEqualPassword: boolean
@@ -121,24 +121,24 @@ export const login = async (
     const errorsObject = inputValidator(inputs)
     if (errorsObject.hasError) {
       return res.status(422).json({
-        IsSuccess: false,
+        success: false,
         Errors: errorsObject.errors,
       })
     }
 
-    const arena = await Arena.findOne({ Email: email })
+    const arena = await Arena.findOne({ email: email })
     if (!arena) {
       return res.status(422).json({
-        IsSuccess: false,
+        success: false,
         Errors: ["There is no such user with this email"],
       })
     } else {
       loggedInUser = arena
-      isEqualPassword = await bcryptjs.compare(password, loggedInUser.Password)
+      isEqualPassword = await bcryptjs.compare(password, loggedInUser.password)
 
       if (!isEqualPassword) {
         return res.status(422).json({
-          IsSuccess: false,
+          success: false,
           Errors: ["Password did not match"],
         })
       }
@@ -154,10 +154,10 @@ export const login = async (
       )
 
       return res.status(200).json({
-        IsSuccess: true,
+        success: true,
         Result: {
-          UserId: loggedInUser._id,
-          Token: token,
+          userId: loggedInUser._id,
+          token: token,
         },
       })
     }

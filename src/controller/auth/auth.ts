@@ -20,15 +20,15 @@ export const signup = async (
   res: Response,
   next: NextFunction
 ) => {
-  const firstName = req.body.FirstName
-  const lastName = req.body.LastName
-  const email = req.body.Email
-  const password = req.body.Password
-  const address = req.body.Address
-  const phone = req.body.Phone
+  const firstName = req.body.firstName
+  const lastName = req.body.lastName
+  const email = req.body.email
+  const password = req.body.password
+  const address = req.body.address
+  const phone = req.body.phone
 
   try {
-    const playerExists = await Player.findOne({ Email: email })
+    const playerExists = await Player.findOne({ email: email })
 
     if (!playerExists) {
       const hashedPw = await bcryptjs.hash(
@@ -37,23 +37,23 @@ export const signup = async (
       )
       console.log(process.env.PASSWORD_SALT)
       const player = new Player({
-        FirstName: firstName,
-        LastName: lastName,
-        Email: email,
-        Password: hashedPw,
-        Address: address,
-        Phone: phone,
-        Wallet: 0,
-        ProfileImageUrl: DEFAULT_PROFILE_IMAGE,
-        RegisteredEvents: [],
-        InterestedEvents: [],
+        firstName,
+        lastName,
+        email,
+        hashedPw,
+        address,
+        phone,
+        wallet: 0,
+        profileImageUrl: DEFAULT_PROFILE_IMAGE,
+        registeredEvents: [],
+        interestedEvents: [],
       })
       const result = await player.save()
 
       if (result) {
         const token = jsonwebtoken.sign(
           {
-            UserId: result._id.toString(),
+            userId: result._id.toString(),
           },
           process.env.TOKEN_KEY as string,
           {
@@ -62,21 +62,21 @@ export const signup = async (
         )
 
         return res.status(201).json({
-          IsSuccess: true,
+          success: true,
           Result: {
-            UserId: result._id,
-            Token: token,
+            userId: result._id,
+            token: token,
           },
         })
       } else {
         return res.status(201).json({
-          IsSuccess: false,
+          success: false,
           Errors: ["Could not create a user"],
         })
       }
     } else {
       return res.status(422).json({
-        IsSuccess: false,
+        success: false,
         Errors: ["User already exists."],
       })
     }
@@ -93,8 +93,8 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-  const email = req.body.Email
-  const password = req.body.Password
+  const email = req.body.email
+  const password = req.body.password
 
   let loggedInUser: IPlayer
   let isEqualPassword: boolean
@@ -118,12 +118,12 @@ export const login = async (
     const errorsObject = inputValidator(inputs)
     if (errorsObject.hasError) {
       return res.status(422).json({
-        IsSuccess: false,
+        success: false,
         Errors: errorsObject.errors,
       })
     }
 
-    const player = await Player.findOne({ Email: email })
+    const player = await Player.findOne({ email: email })
     if (!player) {
       return res.status(422).json({
         IsSuccess: false,
@@ -131,18 +131,18 @@ export const login = async (
       })
     } else {
       loggedInUser = player
-      isEqualPassword = await bcryptjs.compare(password, loggedInUser.Password)
+      isEqualPassword = await bcryptjs.compare(password, loggedInUser.password)
 
       if (!isEqualPassword) {
         return res.status(422).json({
-          IsSuccess: false,
+          success: false,
           Errors: ["Password did not match"],
         })
       }
 
       const token = jsonwebtoken.sign(
         {
-          UserId: loggedInUser._id.toString(),
+          userId: loggedInUser._id.toString(),
         },
         process.env.TOKEN_KEY as string,
         {
@@ -151,10 +151,10 @@ export const login = async (
       )
 
       return res.status(200).json({
-        IsSuccess: true,
+        success: true,
         Result: {
-          UserId: loggedInUser._id,
-          Token: token,
+          userId: loggedInUser._id,
+          token: token,
         },
       })
     }
