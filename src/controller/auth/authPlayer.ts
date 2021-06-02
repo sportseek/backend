@@ -1,57 +1,54 @@
 import {
-  ARENA_NAME_MAX,
-  ARENA_NAME_MIN,
-  ARENA_EMAIL_MAX,
-  ARENA_EMAIL_MIN,
-  ARENA_PASSWORD_MAX,
-  ARENA_PASSWORD_MIN,
-  ADDRESS_MIN_LENGTH,
-  PHONE_MIN_LENGTH,
-  MONTHLY_FEE_MIN,
+  PLAYER_EMAIL_MIN,
+  PLAYER_EMAIL_MAX,
+  PLAYER_PASSWORD_MIN,
+  PLAYER_PASSWORD_MAX,
   DEFAULT_PROFILE_IMAGE,
-} from "../../utility/constants/arenaConstants"
-import { IArena } from "../../models/auth/Arena"
+} from "../../utility/constants/playerConstants"
+import { IPlayer } from "../../models/auth/Player"
 import express, { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
-import Arena from "../../models/auth/Arena"
+import Player from "../../models/auth/Player"
 import dotenv from "dotenv"
 import { inputValidator } from "../../utility/inputValidators"
 
 dotenv.config()
 
-export const arenaSignup = async (
+export const playerSignup = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const arenaName = req.body.arenaName
+  const firstName = req.body.firstName
+  const lastName = req.body.lastName
   const email = req.body.email
   const password = req.body.password
   const address = req.body.address
   const phone = req.body.phone
 
   try {
-    const arenaExists = await Arena.findOne({ email: email })
+    const playerExists = await Player.findOne({ email: email })
 
-    if (!arenaExists) {
+    if (!playerExists) {
       const hashedPw = await bcryptjs.hash(
         password,
         parseInt(process.env.PASSWORD_SALT as string)
       )
       console.log(process.env.PASSWORD_SALT)
-      const arena = new Arena({
-        arenaName,
+      const player = new Player({
+        firstName,
+        lastName,
         email,
         password: hashedPw,
         address,
         phone,
-        location: [],
-        monthlyFee: MONTHLY_FEE_MIN,
-        arenaImageUrl: DEFAULT_PROFILE_IMAGE,
-        bankAccount: " ",
+        wallet: 0,
+        profileImageUrl: DEFAULT_PROFILE_IMAGE,
+        registeredEvents: [],
+        interestedEvents: [],
       })
-      const result = await arena.save()
+      const result = await player.save()
 
       if (result) {
         const token = jsonwebtoken.sign(
@@ -69,19 +66,19 @@ export const arenaSignup = async (
           result: {
             userId: result._id,
             token: token,
-            type: "arena"
+            type: "player"
           },
         })
       } else {
         return res.status(201).json({
           success: false,
-          errors: ["Could not create an arena account"],
+          errors: ["Could not create a user"],
         })
       }
     } else {
       return res.status(422).json({
         success: false,
-        errors: ["Arena account already exists."],
+        errors: ["User already exists."],
       })
     }
   } catch (err) {
@@ -91,5 +88,3 @@ export const arenaSignup = async (
     next(err)
   }
 }
-
-

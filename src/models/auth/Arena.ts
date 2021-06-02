@@ -40,7 +40,6 @@ export const ArenaSchema = new mongoose.Schema({
     type: String,
     requried: [true, "Password required"],
     minLength: [ARENA_PASSWORD_MIN, `Minimum length ${ARENA_PASSWORD_MIN}`],
-    maxLength: [ARENA_PASSWORD_MAX, `Minimum length ${ARENA_PASSWORD_MAX}`],
   },
   address: {
     type: String,
