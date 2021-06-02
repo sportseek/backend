@@ -9,8 +9,8 @@ import {
   PHONE_MIN_LENGTH,
   MONTHLY_FEE_MIN,
   DEFAULT_PROFILE_IMAGE,
-} from "./../../utility/constants/arenaConstants"
-import { IArena } from "./../../models/auth/Arena"
+} from "../../utility/constants/arenaConstants"
+import { IArena } from "../../models/auth/Arena"
 import express, { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
@@ -43,7 +43,7 @@ export const arenaSignup = async (
       const arena = new Arena({
         arenaName,
         email,
-        hashedPw,
+        password: hashedPw,
         address,
         phone,
         location: [],
@@ -69,7 +69,7 @@ export const arenaSignup = async (
           result: {
             userId: result._id,
             token: token,
-            type: "player"
+            type: "arena"
           },
         })
       } else {

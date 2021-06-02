@@ -66,6 +66,7 @@ export const playerSignup = async (
           result: {
             userId: result._id,
             token: token,
+            type: "player"
           },
         })
       } else {

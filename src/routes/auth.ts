@@ -1,6 +1,6 @@
 import express from "express"
 import { playerSignup, login } from "../controller/auth/authPlayer"
-import {arenaSignup} from "../controller/auth/autharena"
+import {arenaSignup} from "../controller/auth/authArena"
 const router = express.Router()
 
 router.post("/playerSignup", playerSignup)
