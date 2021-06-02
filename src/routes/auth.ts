@@ -1,9 +1,11 @@
 import express from "express"
-import { signup, login } from "../controller/auth/auth"
-
+import { playerSignup, login } from "../controller/auth/authPlayer"
+import {arenaSignup} from "../controller/auth/autharena"
 const router = express.Router()
 
-router.post("/playerSignup", signup)
+router.post("/playerSignup", playerSignup)
+
+router.post("/arenaSignup", arenaSignup)
 
 router.post("/playerLogin", login)
 

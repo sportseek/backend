@@ -4,8 +4,8 @@ import {
   PLAYER_PASSWORD_MIN,
   PLAYER_PASSWORD_MAX,
   DEFAULT_PROFILE_IMAGE,
-} from "./../../utility/constants/playerConstants"
-import { IPlayer } from "./../../models/auth/Player"
+} from "../../utility/constants/playerConstants"
+import { IPlayer } from "../../models/auth/Player"
 import express, { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
@@ -15,7 +15,7 @@ import { inputValidator } from "../../utility/inputValidators"
 
 dotenv.config()
 
-export const signup = async (
+export const playerSignup = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -40,7 +40,7 @@ export const signup = async (
         firstName,
         lastName,
         email,
-        hashedPw,
+        password: hashedPw,
         address,
         phone,
         wallet: 0,
@@ -63,7 +63,7 @@ export const signup = async (
 
         return res.status(201).json({
           success: true,
-          Result: {
+          result: {
             userId: result._id,
             token: token,
           },

@@ -20,7 +20,7 @@ import { inputValidator } from "../../utility/inputValidators"
 
 dotenv.config()
 
-export const signup = async (
+export const arenaSignup = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -66,9 +66,10 @@ export const signup = async (
 
         return res.status(201).json({
           success: true,
-          Result: {
+          result: {
             userId: result._id,
             token: token,
+            type: "player"
           },
         })
       } else {
