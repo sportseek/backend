@@ -61,8 +61,8 @@ app.use(
     const status = error.status || 500
     const message = error.message
     res.status(status).json({
-      IsSuccess: false,
-      Errors: [message],
+      success: false,
+      errors: [message],
     })
   }
 )
