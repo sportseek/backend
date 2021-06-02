@@ -72,13 +72,13 @@ export const playerSignup = async (
       } else {
         return res.status(201).json({
           success: false,
-          Errors: ["Could not create a user"],
+          errors: ["Could not create a user"],
         })
       }
     } else {
       return res.status(422).json({
         success: false,
-        Errors: ["User already exists."],
+        errors: ["User already exists."],
       })
     }
   } catch (err) {

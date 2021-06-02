@@ -75,13 +75,13 @@ export const arenaSignup = async (
       } else {
         return res.status(201).json({
           success: false,
-          Errors: ["Could not create an arena account"],
+          errors: ["Could not create an arena account"],
         })
       }
     } else {
       return res.status(422).json({
         success: false,
-        Errors: ["Arena account already exists."],
+        errors: ["Arena account already exists."],
       })
     }
   } catch (err) {
