@@ -1,15 +1,17 @@
 import express, { Application, Request, Response, NextFunction } from "express"
 import dotenv from "dotenv"
 import authRoutes from "./routes/auth"
+import userRoutes from "./routes/user"
 
 import mongoose from "mongoose"
 import { HttpException } from "./exceptions/httpException"
 import multer from "multer"
 import path from "path"
+import cors from "cors"
 
 dotenv.config()
 
-const app: Application = express()
+const app: Application = express().use(cors())
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -39,17 +41,20 @@ app.use(
 )
 app.use("images", express.static(path.join(__dirname, "images")))
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+/**
+ * app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader(
     "Access-Control-Allow-Methods",
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
   )
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
+  res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Content-Type, Authorization, Origin, X-Requested-With")
   next()
-})
+}) */
 
 app.use("/auth", authRoutes)
+
+app.use("/user", userRoutes)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running")
