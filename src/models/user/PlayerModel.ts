@@ -50,10 +50,9 @@ export const PlayerSchema = new mongoose.Schema({
     required: [true, "Password required"],
     minLength: [PLAYER_PASSWORD_MIN, `Minimum length ${PLAYER_PASSWORD_MIN}`],
   },
-  location: { type: LocationSchema, required: true },
+  location: { type: LocationSchema },
   address: {
     type: AddressSchema,
-    required: [true, "Address required"],
     minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
   },
   phone: {

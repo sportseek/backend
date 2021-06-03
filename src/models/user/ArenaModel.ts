@@ -45,7 +45,6 @@ export const ArenaSchema = new mongoose.Schema({
   },
   address: {
     type: AddressSchema,
-    requried: [true, "Arena address required"],
     minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
   },
   phone: {
@@ -55,7 +54,6 @@ export const ArenaSchema = new mongoose.Schema({
   },
   location: {
     type: LocationSchema,
-    requried: [true, "Precise location required"],
   },
   monthlyFee: {
     type: Number,
