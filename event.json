@@ -1,0 +1,16 @@
+{
+"creator": "60b86cba05391f305cbd0c1b",
+  "location": { "lat": 48.23258808504682, "lng": 11.464228033775562 },
+  "description": "A very intersting game of football",
+  "sportType": "Football",
+  "entryFee": "66",
+  "minPlayers": 6,
+  "maxPlayers": 11,
+  "registeredPlayers": ["60b76f87b0317b2714f50213"],
+  "interestedPlayers": [],
+  "revenue": 10,
+  "allDay": false,
+  "title": "Football at Moosach",
+  "start": "2021-06-04T08:05:05.655Z",
+  "end": "2021-06-04T10:05:05.656Z"
+ }
