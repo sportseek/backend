@@ -1,23 +1,24 @@
+import mongoose from "mongoose"
 import {
   ADDRESS_MIN_LENGTH,
   PHONE_MIN_LENGTH,
-} from "./../../utility/constants/playerConstants"
-import mongoose from "mongoose"
-import {
   PLAYER_NAME_MAX,
   PLAYER_NAME_MIN,
   PLAYER_EMAIL_MAX,
   PLAYER_EMAIL_MIN,
-  PLAYER_PASSWORD_MAX,
   PLAYER_PASSWORD_MIN,
 } from "../../utility/constants/playerConstants"
+
+import { AddressType, AddressSchema } from "../../utility/types/Address"
+import { LocationType, LocationSchema } from "../../utility/types/Location"
 
 export interface IPlayer extends mongoose.Document {
   firstName: string
   lastName: string
   email: string
+  location: LocationType
   password: string
-  address: string
+  address: AddressType
   phone: string
   wallet: number
   profileImageUrl: string
@@ -49,9 +50,9 @@ export const PlayerSchema = new mongoose.Schema({
     required: [true, "Password required"],
     minLength: [PLAYER_PASSWORD_MIN, `Minimum length ${PLAYER_PASSWORD_MIN}`],
   },
+  location: { type: LocationSchema },
   address: {
-    type: String,
-    required: [true, "Address required"],
+    type: AddressSchema,
     minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
   },
   phone: {

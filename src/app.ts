@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express"
 import dotenv from "dotenv"
 import authRoutes from "./routes/auth"
 import userRoutes from "./routes/user"
+import eventRoutes from "./routes/event"
 
 import mongoose from "mongoose"
 import { HttpException } from "./exceptions/httpException"
@@ -55,6 +56,8 @@ app.use("images", express.static(path.join(__dirname, "images")))
 app.use("/auth", authRoutes)
 
 app.use("/user", userRoutes)
+
+app.use("/event", eventRoutes)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running")
