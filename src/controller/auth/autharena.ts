@@ -69,7 +69,7 @@ export const arenaSignup = async (
           result: {
             userId: result._id,
             token: token,
-            type: "arena"
+            type: "arena",
           },
         })
       } else {
@@ -91,5 +91,3 @@ export const arenaSignup = async (
     next(err)
   }
 }
-
-
