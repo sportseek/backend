@@ -1,19 +1,8 @@
-import {
-  PLAYER_EMAIL_MIN,
-  PLAYER_EMAIL_MAX,
-  PLAYER_PASSWORD_MIN,
-  PLAYER_PASSWORD_MAX,
-  DEFAULT_PROFILE_IMAGE,
-} from "../../utility/constants/playerConstants"
-import { IPlayer } from "../../models/auth/Player"
-import express, { Request, Response, NextFunction } from "express"
+import { DEFAULT_PROFILE_IMAGE } from "../../utility/constants/playerConstants"
+import { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
-import Player from "../../models/auth/Player"
-import dotenv from "dotenv"
-import { inputValidator } from "../../utility/inputValidators"
-
-dotenv.config()
+import PlayerModel from "../../models/user/PlayerModel"
 
 export const playerSignup = async (
   req: Request,
@@ -28,7 +17,7 @@ export const playerSignup = async (
   const phone = req.body.phone
 
   try {
-    const playerExists = await Player.findOne({ email: email })
+    const playerExists = await PlayerModel.findOne({ email: email })
 
     if (!playerExists) {
       const hashedPw = await bcryptjs.hash(
@@ -36,7 +25,7 @@ export const playerSignup = async (
         parseInt(process.env.PASSWORD_SALT as string)
       )
       console.log(process.env.PASSWORD_SALT)
-      const player = new Player({
+      const player = new PlayerModel({
         firstName,
         lastName,
         email,

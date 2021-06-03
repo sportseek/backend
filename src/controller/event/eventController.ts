@@ -20,3 +20,5 @@ export const createEvent = async (
     next(err)
   }
 }
+
+export default { createEvent }

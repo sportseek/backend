@@ -1,24 +1,11 @@
 import {
-  ARENA_NAME_MAX,
-  ARENA_NAME_MIN,
-  ARENA_EMAIL_MAX,
-  ARENA_EMAIL_MIN,
-  ARENA_PASSWORD_MAX,
-  ARENA_PASSWORD_MIN,
-  ADDRESS_MIN_LENGTH,
-  PHONE_MIN_LENGTH,
   MONTHLY_FEE_MIN,
   DEFAULT_PROFILE_IMAGE,
 } from "../../utility/constants/arenaConstants"
-import { IArena } from "../../models/auth/Arena"
-import express, { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
-import Arena from "../../models/auth/Arena"
-import dotenv from "dotenv"
-import { inputValidator } from "../../utility/inputValidators"
-
-dotenv.config()
+import ArenaModel from "../../models/user/ArenaModel"
 
 export const arenaSignup = async (
   req: Request,
@@ -32,7 +19,7 @@ export const arenaSignup = async (
   const phone = req.body.phone
 
   try {
-    const arenaExists = await Arena.findOne({ email: email })
+    const arenaExists = await ArenaModel.findOne({ email: email })
 
     if (!arenaExists) {
       const hashedPw = await bcryptjs.hash(
@@ -40,7 +27,7 @@ export const arenaSignup = async (
         parseInt(process.env.PASSWORD_SALT as string)
       )
       console.log(process.env.PASSWORD_SALT)
-      const arena = new Arena({
+      const arena = new ArenaModel({
         arenaName,
         email,
         password: hashedPw,

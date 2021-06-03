@@ -1,10 +1,11 @@
 import { Schema, model } from "mongoose"
 import { Event as CalenderEvent } from "react-big-calendar"
-import { Location } from "./location"
+import { AddressSchema, AddressType } from "../../utility/types/Address"
+import { LocationSchema, LocationType } from "../../utility/types/Location"
 
 interface IEvent extends CalenderEvent {
   creator: string
-  location: Location
+  location: LocationType
   description: string
   sportType: string
   entryFee: number
@@ -13,11 +14,12 @@ interface IEvent extends CalenderEvent {
   registeredPlayers: string[]
   interestedPlayers: string[]
   revenue: number
+  address: AddressType
 }
 
 const EventSchema = new Schema<IEvent>({
   creator: { type: String, required: true },
-  location: { lat: Number, lng: Number },
+  location: { type: LocationSchema, required: true },
   description: { type: String, required: true },
   sportType: { type: String, required: true },
   entryFee: { type: Number, required: true },
@@ -26,6 +28,7 @@ const EventSchema = new Schema<IEvent>({
   registeredPlayers: { type: [String], required: true },
   interestedPlayers: { type: [String], required: true },
   revenue: { type: Number, required: true },
+  address: { type: AddressSchema, required: true },
   allDay: Boolean,
   title: { type: String },
   start: { type: Date, default: Date.now, required: true },

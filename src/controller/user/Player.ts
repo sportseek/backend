@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import Player from "../../models/auth/Player"
+import Player from "../../models/user/PlayerModel"
 
 const findById = async (req: Request, res: Response, next: NextFunction) => {
   try {
