@@ -3,6 +3,6 @@ import { createEvent } from "../controller/event/eventController"
 
 const router = express.Router()
 
-router.get("/create/", createEvent)
+router.post("/create/", createEvent)
 
 export default router
