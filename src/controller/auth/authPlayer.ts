@@ -30,7 +30,15 @@ export const playerSignup = async (
         lastName,
         email,
         password: hashedPw,
-        address,
+        address: {
+          careof: "",
+          street: "",
+          postcode: "",
+          district: "",
+          city: "",
+          state: "",
+          country: "",
+        },
         phone,
         wallet: 0,
         profileImageUrl: DEFAULT_PROFILE_IMAGE,
@@ -43,6 +51,7 @@ export const playerSignup = async (
         const token = jsonwebtoken.sign(
           {
             userId: result._id.toString(),
+            type: "player"
           },
           process.env.TOKEN_KEY as string,
           {

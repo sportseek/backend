@@ -31,7 +31,15 @@ export const arenaSignup = async (
         arenaName,
         email,
         password: hashedPw,
-        address,
+        address: {
+          careof: "",
+          street: "",
+          postcode: "",
+          district: "",
+          city: "",
+          state: "",
+          country: "",
+        },
         phone,
         location: [],
         monthlyFee: MONTHLY_FEE_MIN,
@@ -44,6 +52,7 @@ export const arenaSignup = async (
         const token = jsonwebtoken.sign(
           {
             userId: result._id.toString(),
+            type: "arena"
           },
           process.env.TOKEN_KEY as string,
           {
