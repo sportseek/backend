@@ -76,7 +76,7 @@ export const signin = async (
         result: {
           userId: loggedInArena._id,
           token: token,
-          type: "arena",
+          type: loggedInArena.type,
         },
       })
     } else if (player) {
@@ -108,7 +108,7 @@ export const signin = async (
         result: {
           userId: loggedInPlayer._id,
           token: token,
-          type: "player",
+          type: loggedInPlayer.type,
         },
       })
     } else {

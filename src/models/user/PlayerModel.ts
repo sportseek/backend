@@ -16,6 +16,7 @@ export interface IPlayer extends mongoose.Document {
   firstName: string
   lastName: string
   email: string
+  type: string
   location: LocationType
   password: string
   address: AddressType
@@ -44,6 +45,10 @@ export const PlayerSchema = new mongoose.Schema({
     required: [true, "Email required"],
     minLength: [PLAYER_EMAIL_MIN, `Minimum length ${PLAYER_EMAIL_MIN}`],
     maxLength: [PLAYER_EMAIL_MAX, `Maximum length ${PLAYER_EMAIL_MAX}`],
+  },
+  type: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,

@@ -15,8 +15,8 @@ export const arenaSignup = async (
   const arenaName = req.body.arenaName
   const email = req.body.email
   const password = req.body.password
-  const address = req.body.address
   const phone = req.body.phone
+  const type = "arena"
 
   try {
     const arenaExists = await ArenaModel.findOne({ email: email })
@@ -29,18 +29,9 @@ export const arenaSignup = async (
       const arena = new ArenaModel({
         arenaName,
         email,
+        type,
         password: hashedPw,
-        address: {
-          careof: "",
-          street: "",
-          postcode: "",
-          district: "",
-          city: "",
-          state: "",
-          country: "",
-        },
         phone,
-        location: {},
         monthlyFee: MONTHLY_FEE_MIN,
         arenaImageUrl: DEFAULT_PROFILE_IMAGE,
         bankAccount: " ",
@@ -64,7 +55,7 @@ export const arenaSignup = async (
           result: {
             userId: result._id,
             token: token,
-            type: "arena",
+            type: result.type,
           },
         })
       } else {

@@ -13,8 +13,8 @@ export const playerSignup = async (
   const lastName = req.body.lastName
   const email = req.body.email
   const password = req.body.password
-  const address = req.body.address
   const phone = req.body.phone
+  const type = "player"
 
   try {
     const playerExists = await PlayerModel.findOne({ email: email })
@@ -28,16 +28,8 @@ export const playerSignup = async (
         firstName,
         lastName,
         email,
+        type,
         password: hashedPw,
-        address: {
-          careof: "",
-          street: "",
-          postcode: "",
-          district: "",
-          city: "",
-          state: "",
-          country: "",
-        },
         phone,
         wallet: 0,
         profileImageUrl: DEFAULT_PROFILE_IMAGE,
@@ -63,7 +55,7 @@ export const playerSignup = async (
           result: {
             userId: result._id,
             token: token,
-            type: "player",
+            type: result.type,
           },
         })
       } else {

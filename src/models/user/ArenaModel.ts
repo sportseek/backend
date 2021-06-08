@@ -15,6 +15,7 @@ import { LocationType, LocationSchema } from "../../utility/types/Location"
 
 export interface IArena extends mongoose.Document {
   aenaName: string
+  type: string
   email: string
   password: string
   address: AddressType
@@ -42,6 +43,10 @@ export const ArenaSchema = new mongoose.Schema({
     type: String,
     requried: [true, "Password required"],
     minLength: [ARENA_PASSWORD_MIN, `Minimum length ${ARENA_PASSWORD_MIN}`],
+  },
+  type: {
+    type: String,
+    required: true,
   },
   address: {
     type: AddressSchema,
