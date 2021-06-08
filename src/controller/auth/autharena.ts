@@ -26,7 +26,6 @@ export const arenaSignup = async (
         password,
         parseInt(process.env.PASSWORD_SALT as string)
       )
-      console.log(process.env.PASSWORD_SALT)
       const arena = new ArenaModel({
         arenaName,
         email,
@@ -41,7 +40,7 @@ export const arenaSignup = async (
           country: "",
         },
         phone,
-        location: [],
+        location: {},
         monthlyFee: MONTHLY_FEE_MIN,
         arenaImageUrl: DEFAULT_PROFILE_IMAGE,
         bankAccount: " ",

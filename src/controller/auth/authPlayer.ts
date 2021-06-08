@@ -24,7 +24,6 @@ export const playerSignup = async (
         password,
         parseInt(process.env.PASSWORD_SALT as string)
       )
-      console.log(process.env.PASSWORD_SALT)
       const player = new PlayerModel({
         firstName,
         lastName,
