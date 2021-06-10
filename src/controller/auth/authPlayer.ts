@@ -24,7 +24,6 @@ export const playerSignup = async (
         password,
         parseInt(process.env.PASSWORD_SALT as string)
       )
-      console.log(process.env.PASSWORD_SALT)
       const player = new PlayerModel({
         firstName,
         lastName,
@@ -43,6 +42,7 @@ export const playerSignup = async (
         const token = jsonwebtoken.sign(
           {
             userId: result._id.toString(),
+            type: "player"
           },
           process.env.TOKEN_KEY as string,
           {

@@ -26,7 +26,6 @@ export const arenaSignup = async (
         password,
         parseInt(process.env.PASSWORD_SALT as string)
       )
-      console.log(process.env.PASSWORD_SALT)
       const arena = new ArenaModel({
         arenaName,
         email,
@@ -43,6 +42,7 @@ export const arenaSignup = async (
         const token = jsonwebtoken.sign(
           {
             userId: result._id.toString(),
+            type: "arena"
           },
           process.env.TOKEN_KEY as string,
           {
