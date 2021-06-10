@@ -42,7 +42,7 @@ export const playerSignup = async (
         const token = jsonwebtoken.sign(
           {
             userId: result._id.toString(),
-            type: "player"
+            type,
           },
           process.env.TOKEN_KEY as string,
           {

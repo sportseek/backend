@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express"
 import EventModel from "../../models/event/EventModel"
 
-export const findById = async (req: Request, res: Response, next: NextFunction) => {
+export const findById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params.id
     const event = await EventModel.findById(id)
