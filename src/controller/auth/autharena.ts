@@ -42,7 +42,7 @@ export const arenaSignup = async (
         const token = jsonwebtoken.sign(
           {
             userId: result._id.toString(),
-            type: "arena"
+            type,
           },
           process.env.TOKEN_KEY as string,
           {
