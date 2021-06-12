@@ -34,9 +34,6 @@ export const createEvent = async (
   next: NextFunction
 ) => {
   try {
-    // const eventToCreate = req.body
-    // const doc = new EventModel(eventToCreate)
-    // const newEvent = await doc.save()
     const arenaOwner = await ArenaModel.findById(req.body.creator)
 
     if (arenaOwner) {
@@ -61,3 +58,49 @@ export const createEvent = async (
     next(err)
   }
 }
+
+export const updateEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const arenaOwner = await ArenaModel.findById(req.body.creator)
+    const event = await EventModel.findById(req.params.id)
+
+    if (arenaOwner && event) {
+      
+
+      const updatedEvent = await EventModel.findByIdAndUpdate(req.params.id, {
+        ...req.body,
+        location: event.location ? event.location : {},
+        registeredPlayers: event.registeredPlayers,
+        interestedPlayers: event.interestedPlayers,
+        revenue: event.revenue,
+        address: event.address ? event.address : {},
+      }, {
+        new: true,
+        runValidators: true,
+      }).exec()
+
+
+      if(updatedEvent) {
+        return res.status(200).json({
+          success: true,
+          eventId: updatedEvent._id,
+        })
+      }
+      else {
+        return res.status(422).json({
+          success: false,
+          error: "Could not update the event"
+        })
+      }
+    }
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
+
