@@ -22,7 +22,8 @@ export interface IArena extends mongoose.Document {
   phone: string
   location: LocationType
   monthlyFee: number
-  arenaImageUrl: string
+  profileImageUrl: string
+  profileImageId: string
   bankAccount: string
 }
 
@@ -65,9 +66,11 @@ export const ArenaSchema = new mongoose.Schema({
     requried: [true, "Monthly fee required"],
     minValue: [MONTHLY_FEE_MIN, `Minimum length ${MONTHLY_FEE_MIN}`],
   },
-  arenaImageUrl: {
+  profileImageUrl: {
     type: String,
-    required: [true, "Arena Image Required required"],
+  },
+  profileImageId: {
+    type: String,
   },
   bankAccount: {
     type: String,
