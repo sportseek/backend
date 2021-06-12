@@ -19,7 +19,7 @@ interface IEvent extends CalenderEvent {
 
 const EventSchema = new Schema<IEvent>({
   creator: { type: String, required: true },
-  location: { type: LocationSchema, required: true },
+  location: { type: LocationSchema,  },
   description: { type: String, required: true },
   sportType: { type: String, required: true },
   entryFee: { type: Number, required: true },
@@ -28,7 +28,7 @@ const EventSchema = new Schema<IEvent>({
   registeredPlayers: { type: [String], required: true },
   interestedPlayers: { type: [String], required: true },
   revenue: { type: Number, required: true },
-  address: { type: AddressSchema, required: true },
+  address: { type: AddressSchema, },
   allDay: Boolean,
   title: { type: String },
   start: { type: Date, default: Date.now, required: true },

@@ -5,6 +5,6 @@ const router = express.Router()
 
 router.get("/findById/:id", findById)
 
-router.post("/create/", createEvent)
+router.post("/create", createEvent)
 
 export default router
