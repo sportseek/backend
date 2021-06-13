@@ -35,6 +35,7 @@ export const playerSignup = async (
         profileImageUrl: DEFAULT_PROFILE_IMAGE,
         registeredEvents: [],
         interestedEvents: [],
+        location: { lat: 48.137154, lng: 11.576124 },
       })
       const result = await player.save()
 

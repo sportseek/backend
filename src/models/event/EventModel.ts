@@ -15,6 +15,8 @@ interface IEvent extends CalenderEvent {
   interestedPlayers: string[]
   revenue: number
   address: AddressType
+  status: string
+  eventImageUrl: string
 }
 
 const EventSchema = new Schema<IEvent>({
@@ -33,6 +35,8 @@ const EventSchema = new Schema<IEvent>({
   title: { type: String, required: true },
   start: { type: Date, default: Date.now, required: true },
   end: { type: Date, default: Date.now, required: true },
+  status: { type: String, required: true },
+  eventImageUrl: { type: String, required: true },
 })
 
 const EventModel = model<IEvent>("Event", EventSchema)

@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import EventModel from "../../models/event/EventModel"
+import ArenaModel from "../../models/user/ArenaModel"
+import { getUserId } from "../../utility/helperFucntions/helperFunctions"
 
 export const findById = async (
   req: Request,
@@ -33,16 +35,141 @@ export const createEvent = async (
   next: NextFunction
 ) => {
   try {
-    const eventToCreate = req.body
-    const doc = new EventModel(eventToCreate)
-    const newEvent = await doc.save()
+    const arenaOwner = await ArenaModel.findById(req.body.creator)
 
-    return res.status(200).json({
-      success: true,
-      eventId: newEvent._id,
-    })
+    if (arenaOwner) {
+      const newEvent = new EventModel({
+        ...req.body,
+        location: arenaOwner.location ? arenaOwner.location : {},
+        registeredPlayers: [],
+        interestedPlayers: [],
+        revenue: 0,
+        address: arenaOwner.address ? arenaOwner.address : {},
+        status: "active",
+        eventImageUrl: arenaOwner.profileImageUrl
+      })
+
+      const result = await newEvent.save()
+
+      return res.status(200).json({
+        success: true,
+        eventId: result._id,
+      })
+    }
   } catch (err) {
     console.log(err)
+    next(err)
+  }
+}
+
+export const updateEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const arenaOwner = await ArenaModel.findById(req.body.creator)
+    const event = await EventModel.findById(req.params.id)
+
+    if (arenaOwner && event && userId === event.creator) {
+      const updatedEvent = await EventModel.findByIdAndUpdate(
+        req.params.id,
+        {
+          ...req.body,
+          location: event.location ? event.location : {},
+          registeredPlayers: event.registeredPlayers,
+          interestedPlayers: event.interestedPlayers,
+          revenue: event.revenue,
+          address: event.address ? event.address : {},
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      ).exec()
+
+      if (updatedEvent) {
+        return res.status(200).json({
+          success: true,
+          eventId: updatedEvent._id,
+        })
+      } else {
+        return res.status(422).json({
+          success: false,
+          error: "Could not update the event",
+        })
+      }
+    }
+    else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not update the event",
+      })
+    }
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
+export const cancelEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const event = await EventModel.findById(req.params.id)
+
+    if (event) {
+      if (userId === event.creator) {
+        event.status = "cancelled"
+
+        const result = await event.save()
+        return res.status(200).json({
+          success: true,
+          eventId: result._id,
+        })
+      } else {
+        return res.status(422).json({
+          success: false,
+          error: "You can not cancel the event",
+        })
+      }
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "No event found",
+      })
+    }
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
+export const getArenaEvents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    if (userId) {
+      const arenaEvents = await EventModel.find({ creator: userId })
+
+      return res.status(200).json({
+        success: true,
+        arenaEvents: arenaEvents,
+      })
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not find the user for the arena",
+      })
+    }
+  } catch (err) {
     next(err)
   }
 }

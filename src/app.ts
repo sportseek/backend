@@ -42,16 +42,18 @@ app.use(
 )
 app.use("images", express.static(path.join(__dirname, "images")))
 
-/**
- * app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader(
     "Access-Control-Allow-Methods",
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
   )
-  res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Content-Type, Authorization, Origin, X-Requested-With")
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Content-Type, Authorization, Origin, X-Requested-With"
+  )
   next()
-}) */
+})
 
 app.use("/auth", authRoutes)
 
