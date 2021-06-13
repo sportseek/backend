@@ -46,7 +46,7 @@ export const createEvent = async (
         revenue: 0,
         address: arenaOwner.address ? arenaOwner.address : {},
         status: "active",
-        eventImageUrl: arenaOwner.profileImageUrl
+        eventImageUrl: arenaOwner.profileImageUrl,
       })
 
       const result = await newEvent.save()
@@ -100,8 +100,7 @@ export const updateEvent = async (
           error: "Could not update the event",
         })
       }
-    }
-    else {
+    } else {
       return res.status(422).json({
         success: false,
         error: "Could not update the event",

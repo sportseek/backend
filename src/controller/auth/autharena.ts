@@ -35,15 +35,15 @@ export const arenaSignup = async (
         monthlyFee: MONTHLY_FEE_MIN,
         arenaImageUrl: DEFAULT_PROFILE_IMAGE,
         bankAccount: " ",
-        location: { lat: 48.137154, lng: 11.576124 }
+        location: { lat: 48.137154, lng: 11.576124 },
       })
       const result = await arena.save()
 
       if (result) {
         const token = jsonwebtoken.sign(
           {
-            userId: result._id.toString(),
-            type,
+            userId: result._id,
+            userType: result.type,
           },
           process.env.TOKEN_KEY as string,
           {
@@ -54,9 +54,8 @@ export const arenaSignup = async (
         return res.status(201).json({
           success: true,
           result: {
-            userId: result._id,
             token: token,
-            type: result.type,
+            userType: result.type,
           },
         })
       } else {

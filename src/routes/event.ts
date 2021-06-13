@@ -1,5 +1,11 @@
 import express from "express"
-import { createEvent, findById, updateEvent, getArenaEvents, cancelEvent } from "../controller/event/eventController"
+import {
+  createEvent,
+  findById,
+  updateEvent,
+  getArenaEvents,
+  cancelEvent,
+} from "../controller/event/eventController"
 
 const router = express.Router()
 
