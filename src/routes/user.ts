@@ -27,4 +27,9 @@ router.put(
   }
 )
 
+router.put(
+  "/updateArenaImage/:id",
+  ArenaControllar.updateArenaImage
+)
+
 export default router

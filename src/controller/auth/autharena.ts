@@ -35,6 +35,7 @@ export const arenaSignup = async (
         monthlyFee: MONTHLY_FEE_MIN,
         arenaImageUrl: DEFAULT_PROFILE_IMAGE,
         bankAccount: " ",
+        location: { lat: 48.137154, lng: 11.576124 }
       })
       const result = await arena.save()
 
