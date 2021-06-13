@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import EventModel from "../../models/event/EventModel"
 import ArenaModel from "../../models/user/ArenaModel"
+import { getUserId } from "../../utility/helperFucntions/helperFunctions"
 
 export const findById = async (
   req: Request,
@@ -69,31 +70,31 @@ export const updateEvent = async (
     const event = await EventModel.findById(req.params.id)
 
     if (arenaOwner && event) {
-      
+      const updatedEvent = await EventModel.findByIdAndUpdate(
+        req.params.id,
+        {
+          ...req.body,
+          location: event.location ? event.location : {},
+          registeredPlayers: event.registeredPlayers,
+          interestedPlayers: event.interestedPlayers,
+          revenue: event.revenue,
+          address: event.address ? event.address : {},
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      ).exec()
 
-      const updatedEvent = await EventModel.findByIdAndUpdate(req.params.id, {
-        ...req.body,
-        location: event.location ? event.location : {},
-        registeredPlayers: event.registeredPlayers,
-        interestedPlayers: event.interestedPlayers,
-        revenue: event.revenue,
-        address: event.address ? event.address : {},
-      }, {
-        new: true,
-        runValidators: true,
-      }).exec()
-
-
-      if(updatedEvent) {
+      if (updatedEvent) {
         return res.status(200).json({
           success: true,
           eventId: updatedEvent._id,
         })
-      }
-      else {
+      } else {
         return res.status(422).json({
           success: false,
-          error: "Could not update the event"
+          error: "Could not update the event",
         })
       }
     }
@@ -103,4 +104,28 @@ export const updateEvent = async (
   }
 }
 
+export const getArenaEvents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req);
+    if (userId) {
+      const arenaEvents = await EventModel.find({ creator: userId })
 
+      return res.status(200).json({
+        success: true,
+        arenaEvents: arenaEvents,
+      })
+    }
+    else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not find the user for the arena",
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}
