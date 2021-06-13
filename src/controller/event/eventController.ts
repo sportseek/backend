@@ -46,6 +46,7 @@ export const createEvent = async (
         revenue: 0,
         address: arenaOwner.address ? arenaOwner.address : {},
         status: "active",
+        eventImageUrl: arenaOwner.profileImageUrl
       })
 
       const result = await newEvent.save()

@@ -16,6 +16,7 @@ interface IEvent extends CalenderEvent {
   revenue: number
   address: AddressType
   status: string
+  eventImageUrl: string
 }
 
 const EventSchema = new Schema<IEvent>({
@@ -35,6 +36,7 @@ const EventSchema = new Schema<IEvent>({
   start: { type: Date, default: Date.now, required: true },
   end: { type: Date, default: Date.now, required: true },
   status: { type: String, required: true },
+  eventImageUrl: { type: String, required: true },
 })
 
 const EventModel = model<IEvent>("Event", EventSchema)
