@@ -45,6 +45,7 @@ export const createEvent = async (
         interestedPlayers: [],
         revenue: 0,
         address: arenaOwner.address ? arenaOwner.address : {},
+        status: "active",
       })
 
       const result = await newEvent.save()
@@ -66,10 +67,11 @@ export const updateEvent = async (
   next: NextFunction
 ) => {
   try {
+    const userId = getUserId(req)
     const arenaOwner = await ArenaModel.findById(req.body.creator)
     const event = await EventModel.findById(req.params.id)
 
-    if (arenaOwner && event) {
+    if (arenaOwner && event && userId === event.creator) {
       const updatedEvent = await EventModel.findByIdAndUpdate(
         req.params.id,
         {
@@ -98,6 +100,48 @@ export const updateEvent = async (
         })
       }
     }
+    else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not update the event",
+      })
+    }
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
+export const cancelEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const event = await EventModel.findById(req.params.id)
+
+    if (event) {
+      if (userId === event.creator) {
+        event.status = "cancelled"
+
+        const result = await event.save()
+        return res.status(200).json({
+          success: true,
+          eventId: result._id,
+        })
+      } else {
+        return res.status(422).json({
+          success: false,
+          error: "You can not cancel the event",
+        })
+      }
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "No event found",
+      })
+    }
   } catch (err) {
     console.log(err)
     next(err)
@@ -110,7 +154,7 @@ export const getArenaEvents = async (
   next: NextFunction
 ) => {
   try {
-    const userId = getUserId(req);
+    const userId = getUserId(req)
     if (userId) {
       const arenaEvents = await EventModel.find({ creator: userId })
 
@@ -118,8 +162,7 @@ export const getArenaEvents = async (
         success: true,
         arenaEvents: arenaEvents,
       })
-    }
-    else {
+    } else {
       return res.status(422).json({
         success: false,
         error: "Could not find the user for the arena",
