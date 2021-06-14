@@ -1,25 +1,9 @@
 import express, { Request, Response, NextFunction } from "express"
 import ArenaControllar from "../controller/user/Arena"
-import PlayerController from "../controller/user/Player"
-import {
-  getUserId,
-  getUserType,
-} from "../utility/helperFucntions/helperFunctions"
+
+import selectController from "../middleware/selectUser"
 
 const router = express.Router()
-
-const selectController = (req: Request, res: Response, next: NextFunction) => {
-  const userType = getUserType(req)
-
-  const userId = getUserId(req)
-
-  req.params.id = userId
-
-  const type = userType || req.body.type
-
-  res.locals.controller = type === "player" ? PlayerController : ArenaControllar
-  next()
-}
 
 router.get(
   "/",

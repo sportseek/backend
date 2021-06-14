@@ -35,18 +35,18 @@ export const createEvent = async (
   next: NextFunction
 ) => {
   try {
-    const arenaOwner = await ArenaModel.findById(req.body.creator)
+    const user = await res.locals.model.findById(req.body.creator)
 
-    if (arenaOwner) {
+    if (user) {
       const newEvent = new EventModel({
         ...req.body,
-        location: arenaOwner.location ? arenaOwner.location : {},
+        location: user.location ? user.location : {},
         registeredPlayers: [],
         interestedPlayers: [],
         revenue: 0,
-        address: arenaOwner.address ? arenaOwner.address : {},
+        address: user.address ? user.address : {},
         status: "active",
-        eventImageUrl: arenaOwner.profileImageUrl,
+        eventImageUrl: user.profileImageUrl,
       })
 
       const result = await newEvent.save()
@@ -148,19 +148,18 @@ export const cancelEvent = async (
   }
 }
 
-export const getArenaEvents = async (
+export const fetchEventList = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const userId = getUserId(req)
+    const userId = req.params.id
     if (userId) {
-      const arenaEvents = await EventModel.find({ creator: userId })
-
+      const events = await EventModel.find({ creator: userId })
       return res.status(200).json({
         success: true,
-        arenaEvents: arenaEvents,
+        eventList: events,
       })
     } else {
       return res.status(422).json({
