@@ -8,8 +8,8 @@ import { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import { inputValidator } from "../../utility/inputValidators"
-import ArenaModel, { IArena } from "../../models/user/ArenaModel"
-import PlayerModel, { IPlayer } from "../../models/user/PlayerModel"
+import ArenaModel from "../../models/user/ArenaModel"
+import PlayerModel from "../../models/user/PlayerModel"
 
 export const signin = async (
   req: Request,
@@ -19,8 +19,6 @@ export const signin = async (
   const email = req.body.email
   const password = req.body.password
 
-  let loggedInPlayer: IPlayer
-  let loggedInArena: IArena
   let isEqualPassword: boolean
   try {
     const inputs = [
@@ -50,9 +48,10 @@ export const signin = async (
     const player = await PlayerModel.findOne({ email: email })
     const arena = await ArenaModel.findOne({ email: email })
 
-    if (arena) {
-      loggedInArena = arena
-      isEqualPassword = await bcryptjs.compare(password, loggedInArena.password)
+    const user = player || arena
+
+    if (user) {
+      isEqualPassword = await bcryptjs.compare(password, user.password)
 
       if (!isEqualPassword) {
         return res.status(422).json({
@@ -63,7 +62,8 @@ export const signin = async (
 
       const token = jsonwebtoken.sign(
         {
-          userId: loggedInArena._id.toString(),
+          userId: user._id,
+          userType: user.type,
         },
         process.env.TOKEN_KEY as string,
         {
@@ -74,12 +74,12 @@ export const signin = async (
       return res.status(200).json({
         success: true,
         result: {
-          userId: loggedInArena._id,
           token: token,
-          type: loggedInArena.type,
+          userType: user.type,
         },
       })
-    } else if (player) {
+    } /**
+    else if (player) {
       loggedInPlayer = player
       isEqualPassword = await bcryptjs.compare(
         password,
@@ -111,7 +111,7 @@ export const signin = async (
           type: loggedInPlayer.type,
         },
       })
-    } else {
+    } */ else {
       return res.status(422).json({
         success: false,
         errors: ["There is no such user with this email"],

@@ -42,8 +42,8 @@ export const playerSignup = async (
       if (result) {
         const token = jsonwebtoken.sign(
           {
-            userId: result._id.toString(),
-            type,
+            userId: result._id,
+            userType: result.type,
           },
           process.env.TOKEN_KEY as string,
           {
@@ -54,9 +54,8 @@ export const playerSignup = async (
         return res.status(201).json({
           success: true,
           result: {
-            userId: result._id,
             token: token,
-            type: result.type,
+            userType: result.type,
           },
         })
       } else {
