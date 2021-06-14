@@ -14,7 +14,7 @@ import { AddressType, AddressSchema } from "../../utility/types/Address"
 import { LocationType, LocationSchema } from "../../utility/types/Location"
 
 export interface IArena extends mongoose.Document {
-  aenaName: string
+  arenaName: string
   type: string
   email: string
   password: string
