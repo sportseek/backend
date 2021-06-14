@@ -171,3 +171,21 @@ export const fetchEventList = async (
     next(err)
   }
 }
+
+export const fetchAllEvents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const searchParams: any = req.body
+  try {
+
+    const events = await EventModel.find(searchParams.sportType ? {sportType: searchParams.sportType} : {})
+      return res.status(200).json({
+        success: true,
+        eventList: events,
+      })
+  } catch (err) {
+    next(err)
+  }
+}
