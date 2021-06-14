@@ -20,10 +20,8 @@ const findById = async (req: Request, res: Response, next: NextFunction) => {
         user: arena,
       })
   } catch (err) {
-    return res.status(500).json({
-      error: "Internal server error",
-      message: err.message,
-    })
+    console.log(err)
+    next(err)
   }
 }
 
@@ -43,10 +41,8 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({ success: true, user: arena })
   } catch (err) {
-    return res.status(500).json({
-      error: "Internal server error",
-      message: err.message,
-    })
+    console.log(err)
+    next(err)
   }
 }
 
