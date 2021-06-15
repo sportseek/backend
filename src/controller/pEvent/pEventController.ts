@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import PEventModel from "../../models/event/PersonalEventModel"
 import { getUserId } from "../../utility/helperFucntions/helperFunctions"
 
-export const createEvent = async (
+export const createPEvent = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,7 +22,7 @@ export const createEvent = async (
   }
 }
 
-export const fetchEventList = async (
+export const fetchPEventList = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -34,6 +34,24 @@ export const fetchEventList = async (
       success: true,
       events: events,
     })
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
+export const deletePEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // find and remove movie
+    await PEventModel.findByIdAndRemove(req.params.id).exec()
+
+    return res
+      .status(200)
+      .json({ message: `Personal Event successfully deleted` })
   } catch (err) {
     console.log(err)
     next(err)
