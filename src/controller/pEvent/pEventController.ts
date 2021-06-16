@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 import PEventModel from "../../models/event/PersonalEventModel"
 import { getUserId } from "../../utility/helperFucntions/helperFunctions"
+import { Error } from "mongoose"
+import formatValidationErrors from "../../utility/formValidator"
 
 export const createPEvent = async (
   req: Request,
@@ -9,7 +11,6 @@ export const createPEvent = async (
 ) => {
   try {
     const newEvent = new PEventModel(req.body)
-
     const event = await newEvent.save()
 
     return res.status(200).json({
@@ -17,8 +18,11 @@ export const createPEvent = async (
       eventId: event._id,
     })
   } catch (err) {
-    console.log(err.errors)
-    return res.status(422).json(err.errors)
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err, req.body)
+      return res.status(422).json(errorResponse)
+    }
+    next(err)
   }
 }
 
