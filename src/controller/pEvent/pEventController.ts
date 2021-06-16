@@ -17,8 +17,8 @@ export const createPEvent = async (
       eventId: event._id,
     })
   } catch (err) {
-    console.log(err)
-    next(err)
+    console.log(err.errors)
+    return res.status(422).json(err.errors)
   }
 }
 
