@@ -9,7 +9,7 @@ interface IPersonalEvent extends CalenderEvent {
 const PersonalEventSchema = new Schema<IPersonalEvent>({
   creator: { type: String, required: true },
   description: String,
-  title: { type: String, required: true },
+  title: { type: String, required: [true, "Title is required"] },
   start: { type: String, required: true },
   end: { type: String, required: true },
 })

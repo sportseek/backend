@@ -10,7 +10,7 @@ import {
 } from "../../utility/constants/arenaConstants"
 
 import mongoose from "mongoose"
-import { AddressType, AddressSchema } from "../../utility/types/Address"
+import { IAddress, AddressSchema } from "../../utility/types/Address"
 import { LocationType, LocationSchema } from "../../utility/types/Location"
 
 export interface IArena extends mongoose.Document {
@@ -18,7 +18,7 @@ export interface IArena extends mongoose.Document {
   type: string
   email: string
   password: string
-  address: AddressType
+  address: IAddress
   phone: string
   location: LocationType
   monthlyFee: number

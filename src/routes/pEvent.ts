@@ -1,13 +1,16 @@
 import express from "express"
 import {
-  createEvent,
-  fetchEventList,
+  createPEvent,
+  deletePEvent,
+  fetchPEventList,
 } from "../controller/pEvent/pEventController"
 
 const router = express.Router()
 
-router.post("/create", createEvent)
+router.post("/create", createPEvent)
 
-router.get("/fetchEventList", fetchEventList)
+router.delete("/:id", deletePEvent)
+
+router.get("/fetchEventList", fetchPEventList)
 
 export default router

@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose"
 import { Event as CalenderEvent } from "react-big-calendar"
-import { AddressSchema, AddressType } from "../../utility/types/Address"
+import { AddressSchema, IAddress } from "../../utility/types/Address"
 import { LocationSchema, LocationType } from "../../utility/types/Location"
 
 interface IEvent extends CalenderEvent {
@@ -14,7 +14,7 @@ interface IEvent extends CalenderEvent {
   registeredPlayers: string[]
   interestedPlayers: string[]
   revenue: number
-  address: AddressType
+  address: IAddress
   status: string
   eventImageUrl: string
 }

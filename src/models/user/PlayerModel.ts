@@ -1,6 +1,5 @@
 import mongoose from "mongoose"
 import {
-  ADDRESS_MIN_LENGTH,
   PHONE_MIN_LENGTH,
   PLAYER_NAME_MAX,
   PLAYER_NAME_MIN,
@@ -9,7 +8,7 @@ import {
   PLAYER_PASSWORD_MIN,
 } from "../../utility/constants/playerConstants"
 
-import { AddressType, AddressSchema } from "../../utility/types/Address"
+import { IAddress, AddressSchema } from "../../utility/types/Address"
 import { LocationType, LocationSchema } from "../../utility/types/Location"
 
 export interface IPlayer extends mongoose.Document {
@@ -19,7 +18,7 @@ export interface IPlayer extends mongoose.Document {
   type: string
   location: LocationType
   password: string
-  address: AddressType
+  address: IAddress
   phone: string
   wallet: number
   profileImageUrl: string
@@ -48,6 +47,8 @@ export const PlayerSchema = new mongoose.Schema({
   },
   type: {
     type: String,
+    default: "player",
+    immutable: true,
     required: true,
   },
   password: {
@@ -55,10 +56,22 @@ export const PlayerSchema = new mongoose.Schema({
     required: [true, "Password required"],
     minLength: [PLAYER_PASSWORD_MIN, `Minimum length ${PLAYER_PASSWORD_MIN}`],
   },
-  location: { type: LocationSchema },
+  location: {
+    type: LocationSchema,
+    default: { lat: 48.137154, lng: 11.576124 },
+  },
   address: {
     type: AddressSchema,
-    minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
+    default: {
+      careof: "",
+      street: "",
+      streetAddtional: "",
+      postcode: "",
+      district: "",
+      city: "",
+      state: "",
+      country: "",
+    },
   },
   phone: {
     type: String,
@@ -67,18 +80,21 @@ export const PlayerSchema = new mongoose.Schema({
   },
   wallet: {
     type: Number,
+    default: 0,
     required: [true, "Wallet required"],
   },
   profileImageUrl: {
     type: String,
-    required: [true, "Profile Image Required required"],
+    default: "",
   },
   registeredEvents: {
     type: [String],
+    default: [],
     required: [true, "Registered events required"],
   },
   interestedEvents: {
     type: [String],
+    default: [],
     required: [true, "Interested events required"],
   },
 })
