@@ -30,7 +30,7 @@ const EventSchema = new Schema<IEvent>({
   registeredPlayers: { type: [String], default: [], required: true },
   interestedPlayers: { type: [String], default: [], required: true },
   revenue: { type: Number, default: 0, required: true },
-  address: { type: AddressSchema, required: true },
+  address: { type: AddressSchema, required: false },
   allDay: Boolean,
   title: { type: String, required: true },
   start: { type: Date, default: Date.now, required: true },

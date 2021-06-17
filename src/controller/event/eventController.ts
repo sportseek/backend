@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import EventModel from "../../models/event/EventModel"
 import ArenaModel from "../../models/user/ArenaModel"
+import PlayerModel from "../../models/user/PlayerModel"
 import { getUserId } from "../../utility/helperFucntions/helperFunctions"
 
 export const findById = async (
@@ -179,13 +180,64 @@ export const fetchAllEvents = async (
 ) => {
   const searchParams: any = req.body
   try {
-
-    const events = await EventModel.find(searchParams.sportType ? {sportType: searchParams.sportType} : {})
-      return res.status(200).json({
-        success: true,
-        eventList: events,
-      })
+    const events = await EventModel.find(
+      searchParams.sportType ? { sportType: searchParams.sportType } : {}
+    )
+    return res.status(200).json({
+      success: true,
+      eventList: events,
+    })
   } catch (err) {
+    next(err)
+  }
+}
+
+export const updateInterested = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const interested = req.body.interested
+    const player = await PlayerModel.findById(userId)
+    const event = await EventModel.findById(req.params.id)
+
+    if (player && event) {
+      if (interested) {
+        player.interestedEvents.push(event._id)
+        event.interestedPlayers.push(player._id)
+      } else {
+        player.interestedEvents = player.interestedEvents.filter(
+          (item) => item != event._id
+        )
+        event.interestedPlayers = event.interestedPlayers.filter(
+          (item) => item != userId
+        )
+      }
+
+      const res1 = await player.save()
+      const res2 = await event.save()
+
+      if (res1 && res2) {
+        return res.status(200).json({
+          success: true,
+          event: res2,
+        })
+      } else {
+        return res.status(422).json({
+          success: false,
+          error: "Could not update the event",
+        })
+      }
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not update the event",
+      })
+    }
+  } catch (err) {
+    console.log(err)
     next(err)
   }
 }
