@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 import PlayerModel from "../../models/user/PlayerModel"
+import { clearImage } from "../../utility/helperFucntions/helperFunctions"
+
+const cloudinary = require("cloudinary").v2
 
 const findById = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -47,4 +50,56 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-export default { findById, update }
+const updateProfilePic = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await PlayerModel.findById(req.params.id)
+    if (user) {
+      const image = req.file.path
+      cloudinary.config({
+        cloud_name: process.env.CLOUD_NAME,
+        api_key: process.env.API_KEY,
+        api_secret: process.env.API_SECRET,
+      })
+      const imageUrl = await cloudinary.uploader
+        .upload(image, { public_id: user._id })
+        .then((res: any) => res.secure_url)
+        .catch((err: any) => {
+          console.log(err)
+          return null
+        })
+
+      if (imageUrl) {
+        user.profileImageUrl = imageUrl
+        clearImage(image)
+        const result = await user.save()
+        if (result) {
+          return res.status(200).json({ success: true, user: result })
+        } else {
+          return res.status(422).json({
+            success: false,
+            errors: ["Could not update the user"],
+          })
+        }
+      } else {
+        return res.status(422).json({
+          success: false,
+          errors: ["Could not connect to image server, try again"],
+        })
+      }
+    } else {
+      return res.status(422).json({
+        success: false,
+        errors: ["The user does not exist"],
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+
+export default { findById, update, updateProfilePic }

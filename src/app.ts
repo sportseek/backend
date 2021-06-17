@@ -11,6 +11,8 @@ import multer from "multer"
 import path from "path"
 import cors from "cors"
 
+import { makeDir } from "./utility/helperFucntions/helperFunctions"
+
 dotenv.config()
 
 const app: Application = express().use(cors())
@@ -37,6 +39,8 @@ const fileFilter = (req: any, file: any, cb: any) => {
 }
 
 app.use(express.json())
+
+makeDir("images")
 
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")

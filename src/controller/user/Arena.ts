@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import ArenaModel from "../../models/user/ArenaModel"
 import cloudinary from "cloudinary"
-import path from "path"
-import fs from "fs"
+import { clearImage } from "../../utility/helperFucntions/helperFunctions"
 
 const findById = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -122,9 +121,4 @@ const updateArenaImage = async (
   }
 }
 
-const clearImage = (filePath: string) => {
-  filePath = path.join(__dirname, "../../..", filePath)
-  fs.unlink(filePath, (err) => console.log(err))
-}
-
-export default { findById, update, updateArenaImage }
+export default { findById, update, updateProfilePic: updateArenaImage }
