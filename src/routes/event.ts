@@ -7,6 +7,7 @@ import {
   cancelEvent,
   fetchAllEvents,
   updateInterested,
+  updateRegistered,
 } from "../controller/event/eventController"
 
 import selectUserModel from "../middleware/selectUser"
@@ -26,5 +27,7 @@ router.get("/fetchEventList", selectUserModel, fetchEventList)
 router.post("/fetchAllEvents", selectUserModel, fetchAllEvents)
 
 router.put("/updateInterested/:id", updateInterested)
+
+router.put("/updateRegistered/:id", updateRegistered)
 
 export default router

@@ -241,3 +241,53 @@ export const updateInterested = async (
     next(err)
   }
 }
+
+export const updateRegistered = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const registered = req.body.registered
+    const player = await PlayerModel.findById(userId)
+    const event = await EventModel.findById(req.params.id)
+
+    if (player && event) {
+      if (registered) {
+        player.registeredEvents.push(event._id)
+        event.registeredPlayers.push(player._id)
+      } else {
+        player.registeredEvents = player.registeredEvents.filter(
+          (item) => item != event._id
+        )
+        event.registeredPlayers = event.registeredPlayers.filter(
+          (item) => item != userId
+        )
+      }
+
+      const res1 = await player.save()
+      const res2 = await event.save()
+
+      if (res1 && res2) {
+        return res.status(200).json({
+          success: true,
+          event: res2,
+        })
+      } else {
+        return res.status(422).json({
+          success: false,
+          error: "Could not update registration",
+        })
+      }
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not update registration",
+      })
+    }
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
