@@ -1,4 +1,3 @@
-import { DEFAULT_PROFILE_IMAGE } from "../../utility/constants/playerConstants"
 import { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
@@ -14,7 +13,6 @@ export const playerSignup = async (
   const email = req.body.email
   const password = req.body.password
   const phone = req.body.phone
-  const type = "player"
 
   try {
     const playerExists = await PlayerModel.findOne({ email: email })
@@ -28,14 +26,8 @@ export const playerSignup = async (
         firstName,
         lastName,
         email,
-        type,
         password: hashedPw,
         phone,
-        wallet: 0,
-        profileImageUrl: DEFAULT_PROFILE_IMAGE,
-        registeredEvents: [],
-        interestedEvents: [],
-        location: { lat: 48.137154, lng: 11.576124 },
       })
       const result = await player.save()
 

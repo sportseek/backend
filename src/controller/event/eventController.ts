@@ -36,7 +36,7 @@ export const createEvent = async (
   next: NextFunction
 ) => {
   try {
-    const user = await res.locals.model.findById(req.body.creator)
+    const user = await ArenaModel.findById(req.body.creator)
 
     if (user) {
       const newEvent = new EventModel({
@@ -155,7 +155,7 @@ export const fetchEventList = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.params.id
+    const userId = getUserId(req)
     if (userId) {
       const events = await EventModel.find({ creator: userId })
       return res.status(200).json({

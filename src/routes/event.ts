@@ -10,19 +10,17 @@ import {
   updateRegistered,
 } from "../controller/event/eventController"
 
-import selectUserModel from "../middleware/selectUser"
-
 const router = express.Router()
 
 router.get("/findById/:id", findById)
 
-router.post("/create", selectUserModel, createEvent)
+router.post("/create", createEvent)
 
 router.put("/update/:id", updateEvent)
 
 router.put("/cancel/:id", cancelEvent)
 
-router.get("/fetchEventList", selectUserModel, fetchEventList)
+router.get("/fetchEventList", fetchEventList)
 
 router.post("/fetchAllEvents", selectUserModel, fetchAllEvents)
 

@@ -3,12 +3,15 @@ import dotenv from "dotenv"
 import authRoutes from "./routes/auth"
 import userRoutes from "./routes/user"
 import eventRoutes from "./routes/event"
+import pEventRoutes from "./routes/pEvent"
 
 import mongoose from "mongoose"
 import { HttpException } from "./exceptions/httpException"
 import multer from "multer"
 import path from "path"
 import cors from "cors"
+
+import { makeDir } from "./utility/helperFucntions/helperFunctions"
 
 dotenv.config()
 
@@ -37,6 +40,8 @@ const fileFilter = (req: any, file: any, cb: any) => {
 
 app.use(express.json())
 
+makeDir("images")
+
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 )
@@ -60,6 +65,8 @@ app.use("/auth", authRoutes)
 app.use("/user", userRoutes)
 
 app.use("/event", eventRoutes)
+
+app.use("/personalevent", pEventRoutes)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running")

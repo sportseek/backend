@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import ArenaModel from "../../models/user/ArenaModel"
 import cloudinary from "cloudinary"
-import path from "path"
-import fs from "fs"
+import { clearImage } from "../../utility/helperFucntions/helperFunctions"
 
 const findById = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,10 +19,8 @@ const findById = async (req: Request, res: Response, next: NextFunction) => {
         user: arena,
       })
   } catch (err) {
-    return res.status(500).json({
-      error: "Internal server error",
-      message: err.message,
-    })
+    console.log(err)
+    next(err)
   }
 }
 
@@ -43,10 +40,8 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({ success: true, user: arena })
   } catch (err) {
-    return res.status(500).json({
-      error: "Internal server error",
-      message: err.message,
-    })
+    console.log(err)
+    next(err)
   }
 }
 
@@ -126,9 +121,4 @@ const updateArenaImage = async (
   }
 }
 
-const clearImage = (filePath: string) => {
-  filePath = path.join(__dirname, "../../..", filePath)
-  fs.unlink(filePath, (err) => console.log(err))
-}
-
-export default { findById, update, updateArenaImage }
+export default { findById, update, updateProfilePic: updateArenaImage }
