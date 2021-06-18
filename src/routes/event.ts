@@ -10,6 +10,8 @@ import {
   updateRegistered,
 } from "../controller/event/eventController"
 
+import selectUserModel from "../middleware/selectUser"
+
 const router = express.Router()
 
 router.get("/findById/:id", findById)
