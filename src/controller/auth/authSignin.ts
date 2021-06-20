@@ -78,40 +78,7 @@ export const signin = async (
           userType: user.type,
         },
       })
-    } /**
-    else if (player) {
-      loggedInPlayer = player
-      isEqualPassword = await bcryptjs.compare(
-        password,
-        loggedInPlayer.password
-      )
-
-      if (!isEqualPassword) {
-        return res.status(422).json({
-          success: false,
-          errors: ["Password did not match"],
-        })
-      }
-
-      const token = jsonwebtoken.sign(
-        {
-          userId: loggedInPlayer._id.toString(),
-        },
-        process.env.TOKEN_KEY as string,
-        {
-          expiresIn: process.env.TOKEN_KEY_EXPIRATION as string,
-        }
-      )
-
-      return res.status(200).json({
-        success: true,
-        result: {
-          userId: loggedInPlayer._id,
-          token: token,
-          type: loggedInPlayer.type,
-        },
-      })
-    } */ else {
+    } else {
       return res.status(422).json({
         success: false,
         errors: ["There is no such user with this email"],
