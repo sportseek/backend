@@ -41,6 +41,7 @@ export const PlayerSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
     required: [true, "Email required"],
     minLength: [PLAYER_EMAIL_MIN, `Minimum length ${PLAYER_EMAIL_MIN}`],
     maxLength: [PLAYER_EMAIL_MAX, `Maximum length ${PLAYER_EMAIL_MAX}`],

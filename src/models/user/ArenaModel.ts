@@ -36,6 +36,7 @@ export const ArenaSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unqiue: true,
     requried: [true, "Email required"],
     minLength: [ARENA_EMAIL_MIN, `Minimum length ${ARENA_EMAIL_MIN}`],
     maxLength: [ARENA_EMAIL_MAX, `Minimum length ${ARENA_EMAIL_MAX}`],
