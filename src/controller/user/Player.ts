@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import PlayerModel from "../../models/user/PlayerModel"
+import bcryptjs from "bcryptjs"
 import { clearImage } from "../../utility/helperFucntions/helperFunctions"
 import { Error } from "mongoose"
 import formatValidationErrors from "../../utility/formValidator"
@@ -69,8 +70,12 @@ const updateProfilePic = async (
         api_key: process.env.API_KEY,
         api_secret: process.env.API_SECRET,
       })
+      const publicId = await bcryptjs.hash(
+        userId,
+        parseInt(process.env.PASSWORD_SALT as string)
+      )
       const imageUrl = await cloudinary.uploader
-        .upload(image, { public_id: userId })
+        .upload(image, { public_id: publicId })
         .then((res: any) => res.secure_url)
         .catch((err: any) => {
           console.log(err)

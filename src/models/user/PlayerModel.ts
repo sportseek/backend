@@ -35,6 +35,7 @@ export interface IPlayer {
 export const PlayerSchema = new mongoose.Schema({
   firstName: {
     type: String,
+    trim: true,
     required: [true, "First Name required"],
     minLength: [PLAYER_NAME_MIN, `Minimum length ${PLAYER_NAME_MIN}`],
     maxLength: [PLAYER_NAME_MAX, `Maximum length ${PLAYER_NAME_MAX}`],
@@ -42,6 +43,7 @@ export const PlayerSchema = new mongoose.Schema({
   },
   lastName: {
     type: String,
+    trim: true,
     required: [true, "Last Name required"],
     minLength: [PLAYER_NAME_MIN, `Minimum length ${PLAYER_NAME_MIN}`],
     maxLength: [PLAYER_NAME_MAX, `Maximum length ${PLAYER_NAME_MAX}`],
@@ -64,6 +66,7 @@ export const PlayerSchema = new mongoose.Schema({
   },
   password: {
     type: String,
+    trim: true,
     required: [true, "Password required"],
     minLength: [PLAYER_PASSWORD_MIN, `Minimum length ${PLAYER_PASSWORD_MIN}`],
   },
