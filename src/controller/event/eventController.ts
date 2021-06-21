@@ -179,9 +179,17 @@ export const fetchAllEvents = async (
   next: NextFunction
 ) => {
   const searchParams: any = req.body
+  console.log("params", searchParams)
+  let query: any = {}
+  if(searchParams.eventTitle) query.title = {
+    $regex: String(searchParams.eventTitle),
+    $options: "i",
+  }
+  if(searchParams.sportType) query.sportType = searchParams.sportType
+  console.log(query)
   try {
     const events = await EventModel.find(
-      searchParams.sportType ? { sportType: searchParams.sportType } : {}
+      query
     )
     return res.status(200).json({
       success: true,
@@ -288,6 +296,30 @@ export const updateRegistered = async (
     }
   } catch (err) {
     console.log(err)
+    next(err)
+  }
+}
+
+export const getMinMaxPrice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let maxFee: number
+    let minFee: number
+    const maxEvent = await EventModel.find({}).sort({ entryFee: -1 }).limit(1)
+
+    const minEvent = await EventModel.find({}).sort({ entryFee: 1 }).limit(1)
+
+    if (maxEvent && minEvent) {
+      return res.status(200).json({
+        success: true,
+        maxEvent: maxEvent[0],
+        minEvent: minEvent[0],
+      })
+    }
+  } catch (err) {
     next(err)
   }
 }
