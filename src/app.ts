@@ -88,6 +88,8 @@ mongoose
   .connect(process.env.MONGODB_URI as string, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
   })
   .then((result) => {
     console.log("server running")

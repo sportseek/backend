@@ -15,6 +15,8 @@ const formatValidationErrors = (
     if (error instanceof Error.ValidatorError) {
       const { message = "" } = error
       errorResponse[key] = message
+    } else if (error instanceof Error.CastError) {
+      //
     }
   })
 

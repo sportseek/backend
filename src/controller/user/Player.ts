@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 import PlayerModel from "../../models/user/PlayerModel"
 import { clearImage } from "../../utility/helperFucntions/helperFunctions"
+import { Error } from "mongoose"
+import formatValidationErrors from "../../utility/formValidator"
 
 const cloudinary = require("cloudinary").v2
 
@@ -44,9 +46,12 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     ).exec()
 
     return res.status(200).json({ success: true, user: player })
-  } catch (error) {
-    console.log(error)
-    next(error)
+  } catch (err) {
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err, req.body)
+      return res.status(422).json(errorResponse)
+    }
+    next(err)
   }
 }
 
@@ -56,8 +61,8 @@ const updateProfilePic = async (
   next: NextFunction
 ) => {
   try {
-    const user = await PlayerModel.findById(req.params.id)
-    if (user) {
+    const userId = req.params.id
+    if (userId) {
       const image = req.file.path
       cloudinary.config({
         cloud_name: process.env.CLOUD_NAME,
@@ -65,7 +70,7 @@ const updateProfilePic = async (
         api_secret: process.env.API_SECRET,
       })
       const imageUrl = await cloudinary.uploader
-        .upload(image, { public_id: user._id })
+        .upload(image, { public_id: userId })
         .then((res: any) => res.secure_url)
         .catch((err: any) => {
           console.log(err)
@@ -73,11 +78,17 @@ const updateProfilePic = async (
         })
 
       if (imageUrl) {
-        user.profileImageUrl = imageUrl
         clearImage(image)
-        const result = await user.save()
-        if (result) {
-          return res.status(200).json({ success: true, user: result })
+        const user = await PlayerModel.findByIdAndUpdate(
+          userId,
+          { profileImageUrl: imageUrl },
+          {
+            new: true,
+            runValidators: true,
+          }
+        ).exec()
+        if (user) {
+          return res.status(200).json({ success: true, user })
         } else {
           return res.status(422).json({
             success: false,

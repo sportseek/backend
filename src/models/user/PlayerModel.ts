@@ -11,7 +11,9 @@ import {
 import { IAddress, AddressSchema } from "../../utility/types/Address"
 import { LocationType, LocationSchema } from "../../utility/types/Location"
 
-export interface IPlayer extends mongoose.Document {
+import { EMAIL_REGEX, MOBILE_PHONE_REGEX } from "../../utility/regex"
+
+export interface IPlayer {
   firstName: string
   lastName: string
   email: string
@@ -42,9 +44,17 @@ export const PlayerSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
+    trim: true,
     required: [true, "Email required"],
     minLength: [PLAYER_EMAIL_MIN, `Minimum length ${PLAYER_EMAIL_MIN}`],
     maxLength: [PLAYER_EMAIL_MAX, `Maximum length ${PLAYER_EMAIL_MAX}`],
+    validate: {
+      validator: function (v: string) {
+        return EMAIL_REGEX.test(v)
+      },
+      message: (props) =>
+        `${props.value} is not a valid email. Please enter a valid email address.`,
+    },
   },
   type: {
     type: String,
@@ -76,8 +86,15 @@ export const PlayerSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    trim: true,
     required: [true, "Phone number required"],
     minLength: [PHONE_MIN_LENGTH, `Minimum length ${PHONE_MIN_LENGTH}`],
+    validate: {
+      validator: function (v: string) {
+        return MOBILE_PHONE_REGEX.test(v)
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
   },
   wallet: {
     type: Number,
@@ -101,4 +118,5 @@ export const PlayerSchema = new mongoose.Schema({
 })
 
 const Player = mongoose.model<IPlayer>("Player", PlayerSchema)
+
 export default Player
