@@ -54,10 +54,7 @@ export const signin = async (
       isEqualPassword = await bcryptjs.compare(password, user.password)
 
       if (!isEqualPassword) {
-        return res.status(422).json({
-          success: false,
-          errors: ["Password did not match"],
-        })
+        return res.status(422).json({ password: "Password did not match" })
       }
 
       const token = jsonwebtoken.sign(
@@ -79,10 +76,9 @@ export const signin = async (
         },
       })
     } else {
-      return res.status(422).json({
-        success: false,
-        errors: ["There is no such user with this email"],
-      })
+      return res
+        .status(422)
+        .json({ email: "There is no such user with this email" })
     }
   } catch (err) {
     if (!err.statusCode) {

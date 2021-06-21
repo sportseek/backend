@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs"
 import { clearImage } from "../../utility/helperFucntions/helperFunctions"
 import { Error } from "mongoose"
 import formatValidationErrors from "../../utility/formValidator"
-
+import { PLAYER_PASSWORD_MIN } from "../../utility/constants/playerConstants"
 const cloudinary = require("cloudinary").v2
 
 const findById = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,15 +36,43 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     })
   }
 
-  try {
-    const player = await PlayerModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
+  let { password, oldpassword, ...data } = req.body
+
+  if (password) {
+    try {
+      if (password.length < PLAYER_PASSWORD_MIN)
+        return res
+          .status(422)
+          .json({ password: `Minimum length ${PLAYER_PASSWORD_MIN}` })
+
+      const player = await PlayerModel.findOne({ _id: req.params.id })
+      if (player) {
+        const matched = await bcryptjs.compare(oldpassword, player.password)
+
+        if (!matched)
+          return res.status(422).json({ oldpassword: "Password did not match" })
+        else {
+          const hashedPw = await bcryptjs.hash(
+            password,
+            parseInt(process.env.PASSWORD_SALT as string)
+          )
+          data = { ...data, password: hashedPw }
+        }
       }
-    ).exec()
+    } catch (err) {
+      if (err instanceof Error.ValidationError) {
+        const errorResponse = formatValidationErrors(err)
+        return res.status(422).json(errorResponse)
+      }
+      next(err)
+    }
+  }
+
+  try {
+    const player = await PlayerModel.findByIdAndUpdate(req.params.id, data, {
+      new: true,
+      runValidators: true,
+    }).exec()
 
     return res.status(200).json({ success: true, user: player })
   } catch (err) {
