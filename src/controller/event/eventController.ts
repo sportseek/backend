@@ -186,6 +186,16 @@ export const fetchAllEvents = async (
     $options: "i",
   }
   if(searchParams.sportType) query.sportType = searchParams.sportType
+
+  if(searchParams.eventStartTime && searchParams.eventEndTime) query.start = {
+    $gte: searchParams.eventStartTime,
+    $lte: searchParams.eventEndTime
+  }
+
+  if(searchParams.eventFee) query.entryFee = {
+    $gte: searchParams.eventFee[0],
+    $lte: searchParams.eventFee[1]
+  }
   console.log(query)
   try {
     const events = await EventModel.find(
