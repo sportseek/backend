@@ -11,7 +11,11 @@ import {
 import { IAddress, AddressSchema } from "../../utility/types/Address"
 import { LocationType, LocationSchema } from "../../utility/types/Location"
 
-import { EMAIL_REGEX, MOBILE_PHONE_REGEX } from "../../utility/regex"
+import {
+  EMAIL_REGEX,
+  MOBILE_PHONE_REGEX,
+  NAME_REGEX,
+} from "../../utility/regex"
 
 export interface IPlayer {
   firstName: string
@@ -34,12 +38,14 @@ export const PlayerSchema = new mongoose.Schema({
     required: [true, "First Name required"],
     minLength: [PLAYER_NAME_MIN, `Minimum length ${PLAYER_NAME_MIN}`],
     maxLength: [PLAYER_NAME_MAX, `Maximum length ${PLAYER_NAME_MAX}`],
+    match: [NAME_REGEX, "not a valid First name"],
   },
   lastName: {
     type: String,
     required: [true, "Last Name required"],
     minLength: [PLAYER_NAME_MIN, `Minimum length ${PLAYER_NAME_MIN}`],
     maxLength: [PLAYER_NAME_MAX, `Maximum length ${PLAYER_NAME_MAX}`],
+    match: [NAME_REGEX, "not a valid Last name"],
   },
   email: {
     type: String,
@@ -48,13 +54,7 @@ export const PlayerSchema = new mongoose.Schema({
     required: [true, "Email required"],
     minLength: [PLAYER_EMAIL_MIN, `Minimum length ${PLAYER_EMAIL_MIN}`],
     maxLength: [PLAYER_EMAIL_MAX, `Maximum length ${PLAYER_EMAIL_MAX}`],
-    validate: {
-      validator: function (v: string) {
-        return EMAIL_REGEX.test(v)
-      },
-      message: (props) =>
-        `${props.value} is not a valid email. Please enter a valid email address.`,
-    },
+    match: [EMAIL_REGEX, "not a valid email"],
   },
   type: {
     type: String,
@@ -89,12 +89,7 @@ export const PlayerSchema = new mongoose.Schema({
     trim: true,
     required: [true, "Phone number required"],
     minLength: [PHONE_MIN_LENGTH, `Minimum length ${PHONE_MIN_LENGTH}`],
-    validate: {
-      validator: function (v: string) {
-        return MOBILE_PHONE_REGEX.test(v)
-      },
-      message: (props) => `${props.value} is not a valid phone number!`,
-    },
+    match: [MOBILE_PHONE_REGEX, "not a valid mobile phone number"],
   },
   wallet: {
     type: Number,

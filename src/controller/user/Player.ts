@@ -48,7 +48,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({ success: true, user: player })
   } catch (err) {
     if (err instanceof Error.ValidationError) {
-      const errorResponse = formatValidationErrors(err, req.body)
+      const errorResponse = formatValidationErrors(err)
       return res.status(422).json(errorResponse)
     }
     next(err)

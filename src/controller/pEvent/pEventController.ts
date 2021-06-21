@@ -19,7 +19,7 @@ export const createPEvent = async (
     })
   } catch (err) {
     if (err instanceof Error.ValidationError) {
-      const errorResponse = formatValidationErrors(err, req.body)
+      const errorResponse = formatValidationErrors(err)
       return res.status(422).json(errorResponse)
     }
     next(err)
