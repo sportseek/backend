@@ -181,26 +181,27 @@ export const fetchAllEvents = async (
   const searchParams: any = req.body
   console.log("params", searchParams)
   let query: any = {}
-  if(searchParams.eventTitle) query.title = {
-    $regex: String(searchParams.eventTitle),
-    $options: "i",
-  }
-  if(searchParams.sportType) query.sportType = searchParams.sportType
+  if (searchParams.eventTitle)
+    query.title = {
+      $regex: String(searchParams.eventTitle),
+      $options: "i",
+    }
+  if (searchParams.sportType) query.sportType = searchParams.sportType
 
-  if(searchParams.eventStartTime && searchParams.eventEndTime) query.start = {
-    $gte: searchParams.eventStartTime,
-    $lte: searchParams.eventEndTime
-  }
+  if (searchParams.eventStartTime && searchParams.eventEndTime)
+    query.start = {
+      $gte: searchParams.eventStartTime,
+      $lte: searchParams.eventEndTime,
+    }
 
-  if(searchParams.eventFee) query.entryFee = {
-    $gte: searchParams.eventFee[0],
-    $lte: searchParams.eventFee[1]
-  }
+  if (searchParams.eventFee)
+    query.entryFee = {
+      $gte: searchParams.eventFee[0],
+      $lte: searchParams.eventFee[1],
+    }
   console.log(query)
   try {
-    const events = await EventModel.find(
-      query
-    )
+    const events = await EventModel.find(query)
     return res.status(200).json({
       success: true,
       eventList: events,
