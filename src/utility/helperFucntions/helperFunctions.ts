@@ -1,3 +1,4 @@
+// eslint-disable-next-line camelcase
 import jwt_decode from "jwt-decode"
 import { Request } from "express"
 
@@ -30,7 +31,6 @@ export const getUserType = (req: Request) => {
 
 export const clearImage = (filePath: string) => {
   filePath = path.join(__dirname, "../../..", filePath)
-  console.log(filePath)
   fs.unlink(filePath, (err) => console.log(err))
 }
 
