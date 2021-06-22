@@ -92,6 +92,28 @@ export const updateEvent = async (
       ).exec()
 
       if (updatedEvent) {
+        for (const player of updatedEvent.interestedPlayers) {
+          const notifyForInterested = await createNotification(
+            arenaOwner._id,
+            player,
+            "eventUpdated",
+            `${arenaOwner.arenaName} has updated the event ${updatedEvent.title}`,
+            false,
+            next
+          )
+        }
+
+        for (const player of updatedEvent.registeredPlayers) {
+          const notifyForInterested = await createNotification(
+            arenaOwner._id,
+            player,
+            "eventUpdated",
+            `${arenaOwner.arenaName} has updated the event ${updatedEvent.title}`,
+            false,
+            next
+          )
+        }
+
         return res.status(200).json({
           success: true,
           eventId: updatedEvent._id,
