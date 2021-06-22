@@ -7,8 +7,8 @@ interface INotification {
   receiverName: string
   type: string
   description: string
-  CreatedAt: Date
-  UnreadStatus: boolean
+  createdAt: Date
+  unreadStatus: boolean
 }
 
 const NotificationSchema = new Schema<INotification>({

@@ -1,8 +1,10 @@
 import express from "express"
-import { getNotifications } from "../controller/notification/notificationController"
+import { getNotifications, readNotification } from "../controller/notification/notificationController"
 
 const router = express.Router()
 
 router.get("/getNotifications/:pageNumber", getNotifications)
+
+router.post("/readNotification", readNotification)
 
 export default router

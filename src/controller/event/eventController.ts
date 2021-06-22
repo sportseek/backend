@@ -300,7 +300,7 @@ export const updateRegistered = async (
         player._id,
         event.creator,
         "registered",
-        `${player.firstName} ${player.lastName} has registered in ${event.title}`,
+        `${player.firstName} ${player.lastName} has registered for ${event.title}`,
         true,
         next
       )
