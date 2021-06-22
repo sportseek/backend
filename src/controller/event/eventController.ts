@@ -3,6 +3,7 @@ import EventModel from "../../models/event/EventModel"
 import ArenaModel from "../../models/user/ArenaModel"
 import PlayerModel from "../../models/user/PlayerModel"
 import { getUserId } from "../../utility/helperFucntions/helperFunctions"
+import { createNotification } from "../notification/notificationController"
 
 export const findById = async (
   req: Request,
@@ -181,26 +182,27 @@ export const fetchAllEvents = async (
   const searchParams: any = req.body
   console.log("params", searchParams)
   let query: any = {}
-  if(searchParams.eventTitle) query.title = {
-    $regex: String(searchParams.eventTitle),
-    $options: "i",
-  }
-  if(searchParams.sportType) query.sportType = searchParams.sportType
+  if (searchParams.eventTitle)
+    query.title = {
+      $regex: String(searchParams.eventTitle),
+      $options: "i",
+    }
+  if (searchParams.sportType) query.sportType = searchParams.sportType
 
-  if(searchParams.eventStartTime && searchParams.eventEndTime) query.start = {
-    $gte: searchParams.eventStartTime,
-    $lte: searchParams.eventEndTime
-  }
+  if (searchParams.eventStartTime && searchParams.eventEndTime)
+    query.start = {
+      $gte: searchParams.eventStartTime,
+      $lte: searchParams.eventEndTime,
+    }
 
-  if(searchParams.eventFee) query.entryFee = {
-    $gte: searchParams.eventFee[0],
-    $lte: searchParams.eventFee[1]
-  }
+  if (searchParams.eventFee)
+    query.entryFee = {
+      $gte: searchParams.eventFee[0],
+      $lte: searchParams.eventFee[1],
+    }
   console.log(query)
   try {
-    const events = await EventModel.find(
-      query
-    )
+    const events = await EventModel.find(query)
     return res.status(200).json({
       success: true,
       eventList: events,
@@ -234,14 +236,24 @@ export const updateInterested = async (
         )
       }
 
-      const res1 = await player.save()
-      const res2 = await event.save()
+      const notify = await createNotification(
+        player._id,
+        event.creator,
+        "interested",
+        `${player.firstName} ${player.lastName} is interested in ${event.title}`,
+        true,
+        next
+      )
+      if (notify) {
+        const res1 = await player.save()
+        const res2 = await event.save()
 
-      if (res1 && res2) {
-        return res.status(200).json({
-          success: true,
-          event: res2,
-        })
+        if (res1 && res2) {
+          return res.status(200).json({
+            success: true,
+            event: res2,
+          })
+        }
       } else {
         return res.status(422).json({
           success: false,
@@ -284,14 +296,25 @@ export const updateRegistered = async (
         )
       }
 
-      const res1 = await player.save()
-      const res2 = await event.save()
+      const notify = await createNotification(
+        player._id,
+        event.creator,
+        "registered",
+        `${player.firstName} ${player.lastName} has registered in ${event.title}`,
+        true,
+        next
+      )
 
-      if (res1 && res2) {
-        return res.status(200).json({
-          success: true,
-          event: res2,
-        })
+      if (notify) {
+        const res1 = await player.save()
+        const res2 = await event.save()
+
+        if (res1 && res2) {
+          return res.status(200).json({
+            success: true,
+            event: res2,
+          })
+        }
       } else {
         return res.status(422).json({
           success: false,
