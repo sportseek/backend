@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth"
 import userRoutes from "./routes/user"
 import eventRoutes from "./routes/event"
 import pEventRoutes from "./routes/pEvent"
+import notificationRoutes from "./routes/notification"
 
 import mongoose from "mongoose"
 import { HttpException } from "./exceptions/httpException"
@@ -67,6 +68,8 @@ app.use("/user", userRoutes)
 app.use("/event", eventRoutes)
 
 app.use("/personalevent", pEventRoutes)
+
+app.use("/notification", notificationRoutes)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running")
