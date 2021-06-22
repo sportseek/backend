@@ -1,5 +1,8 @@
 import express from "express"
-import { getNotifications, readNotification } from "../controller/notification/notificationController"
+import {
+  getNotifications,
+  readNotification,
+} from "../controller/notification/notificationController"
 
 const router = express.Router()
 

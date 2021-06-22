@@ -14,7 +14,7 @@ export type IAddress = {
 
 export const AddressSchema = new mongoose.Schema({
   careof: { type: String },
-  street: { type: String, trim: true, },
+  street: { type: String, trim: true },
   streetAddtional: { type: String, trim: true },
   postcode: {
     type: String,
