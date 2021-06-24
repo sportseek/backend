@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import PlayerModel from "../../models/user/PlayerModel"
+import { Error } from "mongoose"
+import formatValidationErrors from "../../utility/formValidator"
 
 export const playerSignup = async (
   req: Request,
@@ -52,19 +54,21 @@ export const playerSignup = async (
         })
       } else {
         return res.status(201).json({
-          success: false,
           errors: ["Could not create a user"],
         })
       }
     } else {
       return res.status(422).json({
-        success: false,
         errors: ["User already exists."],
       })
     }
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
+    }
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err)
+      return res.status(422).json(errorResponse)
     }
     next(err)
   }

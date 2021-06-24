@@ -76,16 +76,6 @@ export const PlayerSchema = new mongoose.Schema({
   },
   address: {
     type: AddressSchema,
-    default: {
-      careof: "",
-      street: "",
-      streetAddtional: "",
-      postcode: "",
-      district: "",
-      city: "",
-      state: "",
-      country: "",
-    },
   },
   phone: {
     type: String,
