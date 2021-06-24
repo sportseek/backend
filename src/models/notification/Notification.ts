@@ -22,6 +22,9 @@ const NotificationSchema = new Schema<INotification>({
   unreadStatus: { type: Boolean, required: true },
 })
 
-const NotificationModel = model<INotification>("Notification", NotificationSchema)
+const NotificationModel = model<INotification>(
+  "Notification",
+  NotificationSchema
+)
 
 export default NotificationModel
