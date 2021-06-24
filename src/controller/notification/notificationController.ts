@@ -90,44 +90,44 @@ export const getNotifications = async (
 }
 
 export const readNotification = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const notificationId = req.body.notificationId
-  try {
-    const userId = getUserId(req)
-
-    const notification = await NotificationModel.findById(notificationId)
-
-    if (!notification) {
-      return res.status(422).json({
-        success: false,
-        Errors: ["Such notification does not exist."],
-      })
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const notificationId = req.body.notificationId;
+    try {
+      const userId = getUserId(req);
+  
+      const notification = await NotificationModel.findById(notificationId);
+  
+      if (!notification) {
+        return res.status(422).json({
+          success: false,
+          Errors: ["Such notification does not exist."],
+        });
+      }
+  
+      if (notification.receiverId != userId) {
+        return res.status(401).json({
+          success: false,
+          Errors: ["You are unauthorized for this operation"],
+        });
+      }
+  
+      notification.unreadStatus = false;
+  
+      const result = await notification.save();
+  
+      if (result) {
+        return res.status(200).json({
+          success: true,
+          notification: result,
+        });
+      }
+    } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
     }
-
-    if (notification.receiverId != userId) {
-      return res.status(401).json({
-        success: false,
-        Errors: ["You are unauthorized for this operation"],
-      })
-    }
-
-    notification.unreadStatus = false
-
-    const result = await notification.save()
-
-    if (result) {
-      return res.status(200).json({
-        success: true,
-        notification: result,
-      })
-    }
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500
-    }
-    next(err)
-  }
-}
+  };
