@@ -30,13 +30,12 @@ const findById = async (req: Request, res: Response, next: NextFunction) => {
 
 const update = async (req: Request, res: Response, next: NextFunction) => {
   if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({
-      error: "Bad Request",
-      message: "The request body is empty",
-    })
+    return res.status(400).json(["The request body is empty"])
   }
 
-  let { password, oldpassword, ...data } = req.body
+  let { password = "", oldpassword, ...data } = req.body
+
+  password = password.trim()
 
   if (password) {
     try {
