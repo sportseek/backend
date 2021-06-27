@@ -30,6 +30,7 @@ export interface IPlayer {
   profileImageUrl: string
   registeredEvents: string[]
   interestedEvents: string[]
+  friends: string[]
 }
 
 export const PlayerSchema = new mongoose.Schema({
@@ -102,6 +103,10 @@ export const PlayerSchema = new mongoose.Schema({
     type: [String],
     default: [],
     required: [true, "Interested events required"],
+  },
+  friends: {
+    type: [String],
+    default: [],
   },
 })
 
