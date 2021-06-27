@@ -4,7 +4,6 @@ import {
   ARENA_EMAIL_MAX,
   ARENA_EMAIL_MIN,
   ARENA_PASSWORD_MIN,
-  ADDRESS_MIN_LENGTH,
   PHONE_MIN_LENGTH,
   MONTHLY_FEE_MIN,
 } from "../../utility/constants/arenaConstants"
@@ -52,7 +51,6 @@ export const ArenaSchema = new mongoose.Schema({
   },
   address: {
     type: AddressSchema,
-    minLength: [ADDRESS_MIN_LENGTH, `Minimum length ${ADDRESS_MIN_LENGTH}`],
   },
   phone: {
     type: String,

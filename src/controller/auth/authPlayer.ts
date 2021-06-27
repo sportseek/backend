@@ -4,6 +4,7 @@ import jsonwebtoken from "jsonwebtoken"
 import PlayerModel from "../../models/user/PlayerModel"
 import { Error } from "mongoose"
 import formatValidationErrors from "../../utility/formValidator"
+import { PLAYER_PASSWORD_MIN } from "../../utility/constants/playerConstants"
 
 export const playerSignup = async (
   req: Request,
@@ -20,6 +21,11 @@ export const playerSignup = async (
     const playerExists = await PlayerModel.findOne({ email: email })
 
     if (!playerExists) {
+      if (password.length < PLAYER_PASSWORD_MIN)
+        return res
+          .status(422)
+          .json({ password: `Minimum length ${PLAYER_PASSWORD_MIN}` })
+
       const hashedPw = await bcryptjs.hash(
         password,
         parseInt(process.env.PASSWORD_SALT as string)
