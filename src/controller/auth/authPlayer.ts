@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from "express"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import PlayerModel from "../../models/user/PlayerModel"
+import { Error } from "mongoose"
+import formatValidationErrors from "../../utility/formValidator"
+import { PLAYER_PASSWORD_MIN } from "../../utility/constants/playerConstants"
 
 export const playerSignup = async (
   req: Request,
@@ -18,6 +21,11 @@ export const playerSignup = async (
     const playerExists = await PlayerModel.findOne({ email: email })
 
     if (!playerExists) {
+      if (password.length < PLAYER_PASSWORD_MIN)
+        return res
+          .status(422)
+          .json({ password: `Minimum length ${PLAYER_PASSWORD_MIN}` })
+
       const hashedPw = await bcryptjs.hash(
         password,
         parseInt(process.env.PASSWORD_SALT as string)
@@ -52,19 +60,21 @@ export const playerSignup = async (
         })
       } else {
         return res.status(201).json({
-          success: false,
           errors: ["Could not create a user"],
         })
       }
     } else {
       return res.status(422).json({
-        success: false,
         errors: ["User already exists."],
       })
     }
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500
+    }
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err)
+      return res.status(422).json(errorResponse)
     }
     next(err)
   }
