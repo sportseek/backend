@@ -378,3 +378,27 @@ export const getMinMaxPrice = async (
     next(err)
   }
 }
+
+export const getMinMaxDate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let maxDate: Date
+    let minDate: Date
+    const maxEvent = await EventModel.find({}).sort({ start: -1 }).limit(1)
+
+    const minEvent = await EventModel.find({}).sort({ start: 1 }).limit(1)
+
+    if (maxEvent && minEvent) {
+      return res.status(200).json({
+        success: true,
+        maxEvent: maxEvent[0],
+        minEvent: minEvent[0],
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}
