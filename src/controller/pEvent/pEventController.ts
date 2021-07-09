@@ -61,3 +61,41 @@ export const deletePEvent = async (
     next(err)
   }
 }
+
+export const fetchAllPEvents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const searchParams: any = req.body
+  console.log("params", searchParams)
+
+  try {
+    let query: any = {}
+
+    if (searchParams.eventStartTime && searchParams.eventEndTime) {
+      query.start = {
+        $lte: searchParams.eventEndTime,
+      }
+      query.end = {
+        $gte: searchParams.eventStartTime,
+      }
+    }
+
+    console.log(query)
+    const pEvents = await PEventModel.find(query)
+    if (pEvents) {
+      return res.status(200).json({
+        success: true,
+        eventList: pEvents,
+      })
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "No schedules found",
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}

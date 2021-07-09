@@ -222,7 +222,7 @@ export const fetchAllEvents = async (
       $gte: searchParams.eventFee[0],
       $lte: searchParams.eventFee[1],
     }
-  console.log(query)
+  // console.log(query)
   try {
     const events = await EventModel.find(query)
     return res.status(200).json({
