@@ -382,3 +382,27 @@ export const getMinMaxPrice = async (
     next(err)
   }
 }
+
+export const fetchAllEventsByCreator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const creatorId = req.body.creator
+    if (creatorId) {
+      const events = await EventModel.find({ creator: creatorId })
+      return res.status(200).json({
+        success: true,
+        eventList: events,
+      })
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not find the user for the arena",
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}
