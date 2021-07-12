@@ -222,12 +222,27 @@ export const fetchAllEvents = async (
       $gte: searchParams.eventFee[0],
       $lte: searchParams.eventFee[1],
     }
-  // console.log(query)
+  console.log(query)
+
+  let sort: any = {}
+
+  if(searchParams.sortBy && searchParams.sortValue) {
+    sort = {
+      [searchParams.sortBy]: searchParams.sortValue
+    }
+  }
   try {
-    const events = await EventModel.find(query)
+    let events = await EventModel.find(query).sort(sort)
+    if(searchParams.location)
+    {
+      events=events.filter(item => item.location.lat<=searchParams.location.lat+2 && item.location.lat>=searchParams.location.lat-2)
+
+      events=events.filter(item => item.location.lng<=searchParams.location.lng+2 && item.location.lng>=searchParams.location.lng-2)
+    }
     return res.status(200).json({
       success: true,
       eventList: events,
+
     })
   } catch (err) {
     next(err)
@@ -383,6 +398,31 @@ export const getMinMaxPrice = async (
   }
 }
 
+export const getMinMaxDate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let maxDate: Date
+    let minDate: Date
+    const maxEvent = await EventModel.find({}).sort({ start: -1 }).limit(1)
+
+    const minEvent = await EventModel.find({}).sort({ start: 1 }).limit(1)
+
+    if (maxEvent && minEvent) {
+      return res.status(200).json({
+        success: true,
+        maxEvent: maxEvent[0],
+        minEvent: minEvent[0],
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+
 export const fetchAllEventsByCreator = async (
   req: Request,
   res: Response,
@@ -406,3 +446,4 @@ export const fetchAllEventsByCreator = async (
     next(err)
   }
 }
+

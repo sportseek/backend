@@ -9,6 +9,7 @@ import {
   updateInterested,
   updateRegistered,
   getMinMaxPrice,
+  getMinMaxDate,
   fetchAllEventsByCreator,
 } from "../controller/event/eventController"
 
@@ -34,6 +35,7 @@ router.put("/updateRegistered/:id", updateRegistered)
 
 router.get("/getMinMaxPrice", getMinMaxPrice)
 
+router.get("/getMinMaxDate", getMinMaxDate)
 router.post("/fetchAllEventsByCreator/", fetchAllEventsByCreator)
 
 export default router
