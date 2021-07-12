@@ -222,7 +222,7 @@ export const fetchAllEvents = async (
       $gte: searchParams.eventFee[0],
       $lte: searchParams.eventFee[1],
     }
-  console.log(query)
+  // console.log(query)
   try {
     const events = await EventModel.find(query)
     return res.status(200).json({
@@ -302,6 +302,7 @@ export const updateRegistered = async (
   try {
     const userId = getUserId(req)
     const registered = req.body.registered
+    const fee = req.body.fee
     const player = await PlayerModel.findById(userId)
     const event = await EventModel.findById(req.params.id)
 
@@ -309,6 +310,7 @@ export const updateRegistered = async (
       if (registered) {
         player.registeredEvents.push(event._id)
         event.registeredPlayers.push(player._id)
+        event.revenue += fee
       } else {
         player.registeredEvents = player.registeredEvents.filter(
           (item) => item != event._id
@@ -316,6 +318,8 @@ export const updateRegistered = async (
         event.registeredPlayers = event.registeredPlayers.filter(
           (item) => item != userId
         )
+        event.revenue -= fee
+        event.revenue < 0 ? (event.revenue = 0) : event.revenue
       }
 
       const notify = await createNotification(
@@ -372,6 +376,30 @@ export const getMinMaxPrice = async (
         success: true,
         maxEvent: maxEvent[0],
         minEvent: minEvent[0],
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const fetchAllEventsByCreator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const creatorId = req.body.creator
+    if (creatorId) {
+      const events = await EventModel.find({ creator: creatorId })
+      return res.status(200).json({
+        success: true,
+        eventList: events,
+      })
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not find the user for the arena",
       })
     }
   } catch (err) {
