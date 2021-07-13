@@ -1,15 +1,23 @@
 import express, { Application, Request, Response, NextFunction } from "express"
 import dotenv from "dotenv"
 import authRoutes from "./routes/auth"
+import userRoutes from "./routes/user"
+import eventRoutes from "./routes/event"
+import pEventRoutes from "./routes/pEvent"
+import arenaRoutes from "./routes/arena"
+import notificationRoutes from "./routes/notification"
 
 import mongoose from "mongoose"
 import { HttpException } from "./exceptions/httpException"
 import multer from "multer"
 import path from "path"
+import cors from "cors"
+
+import { makeDir } from "./utility/helperFucntions/helperFunctions"
 
 dotenv.config()
 
-const app: Application = express()
+const app: Application = express().use(cors())
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -34,6 +42,8 @@ const fileFilter = (req: any, file: any, cb: any) => {
 
 app.use(express.json())
 
+makeDir("images")
+
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 )
@@ -45,11 +55,24 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     "Access-Control-Allow-Methods",
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
   )
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Content-Type, Authorization, Origin, X-Requested-With"
+  )
   next()
 })
 
 app.use("/auth", authRoutes)
+
+app.use("/user", userRoutes)
+
+app.use("/event", eventRoutes)
+
+app.use("/personalevent", pEventRoutes)
+
+app.use("/notification", notificationRoutes)
+
+app.use("/arena", arenaRoutes)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is running")
@@ -61,8 +84,8 @@ app.use(
     const status = error.status || 500
     const message = error.message
     res.status(status).json({
-      IsSuccess: false,
-      Errors: [message],
+      success: false,
+      errors: [message],
     })
   }
 )
@@ -71,6 +94,8 @@ mongoose
   .connect(process.env.MONGODB_URI as string, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
   })
   .then((result) => {
     console.log("server running")
