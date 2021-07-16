@@ -180,6 +180,10 @@ export const fetchEventList = async (
   try {
     const userId = getUserId(req)
     const searchParams: any = req.body
+    const pageSize = req.body.pageSize
+    const pageNumber = req.body.pageNumber
+    const skipItems = (pageNumber-1) * pageSize
+
     console.log("params", searchParams)
     let query: any = {}
     query.creator = userId
@@ -197,11 +201,13 @@ export const fetchEventList = async (
         $lte: searchParams.eventEndTime,
       }
     if (userId) {
-      const events = await EventModel.find(query)
+      const events = await EventModel.find(query).skip(skipItems).limit(pageSize)
+      const totalArenaEvents = await EventModel.countDocuments(query)
 
       return res.status(200).json({
         success: true,
         eventList: events,
+        totalArenaEvents,
       })
     } else {
       return res.status(422).json({
