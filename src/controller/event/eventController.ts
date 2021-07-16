@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from "express"
 import EventModel from "../../models/event/EventModel"
 import ArenaModel from "../../models/user/ArenaModel"
 import PlayerModel from "../../models/user/PlayerModel"
-import { getUserId } from "../../utility/helperFucntions/helperFunctions"
+import {
+  getUserId,
+  uploadImage,
+} from "../../utility/helperFucntions/helperFunctions"
 import { createNotification } from "../notification/notificationController"
 
 export const findById = async (
@@ -37,18 +40,29 @@ export const createEvent = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body)
     const user = await ArenaModel.findById(req.body.creator)
+    const imageUrl = req.file ? req.file.path : ""
 
     if (user) {
+      let imageUploadDetails: any = null
+      if (imageUrl) imageUploadDetails = await uploadImage(imageUrl)
+
       const newEvent = new EventModel({
         ...req.body,
+        entryFee: +req.body.entryFee,
+        maxPlayers: +req.body.maxPlayers,
+        minPlayers: +req.body.minPlayers,
         location: user.location ? user.location : {},
         registeredPlayers: [],
         interestedPlayers: [],
         revenue: 0,
         address: user.address ? user.address : {},
         status: "active",
-        eventImageUrl: user.profileImageUrl,
+        eventImageUrl:
+          imageUrl && imageUploadDetails
+            ? imageUploadDetails.uploadedImageUrl
+            : user.profileImageUrl,
       })
 
       const result = await newEvent.save()
@@ -69,21 +83,33 @@ export const updateEvent = async (
   res: Response,
   next: NextFunction
 ) => {
+  const imageUrl = req.file ? req.file.path : ""
+
   try {
     const userId = getUserId(req)
     const arenaOwner = await ArenaModel.findById(req.body.creator)
     const event = await EventModel.findById(req.params.id)
 
     if (arenaOwner && event && userId === event.creator) {
+      let imageUploadDetails: any = null
+      if (imageUrl) imageUploadDetails = await uploadImage(imageUrl)
+
       const updatedEvent = await EventModel.findByIdAndUpdate(
         req.params.id,
         {
           ...req.body,
+          entryFee: +req.body.entryFee,
+          maxPlayers: +req.body.maxPlayers,
+          minPlayers: +req.body.minPlayers,
           location: event.location ? event.location : {},
           registeredPlayers: event.registeredPlayers,
           interestedPlayers: event.interestedPlayers,
           revenue: event.revenue,
           address: event.address ? event.address : {},
+          eventImageUrl:
+            imageUrl && imageUploadDetails
+              ? imageUploadDetails.uploadedImageUrl
+              : event.eventImageUrl,
         },
         {
           new: true,
@@ -182,7 +208,7 @@ export const fetchEventList = async (
     const searchParams: any = req.body
     const pageSize = req.body.pageSize
     const pageNumber = req.body.pageNumber
-    const skipItems = (pageNumber-1) * pageSize
+    const skipItems = (pageNumber - 1) * pageSize
 
     console.log("params", searchParams)
     let query: any = {}
@@ -201,7 +227,10 @@ export const fetchEventList = async (
         $lte: searchParams.eventEndTime,
       }
     if (userId) {
-      const events = await EventModel.find(query).skip(skipItems).limit(pageSize)
+      const events = await EventModel.find(query)
+        .sort({ start: -1 })
+        .skip(skipItems)
+        .limit(pageSize)
       const totalArenaEvents = await EventModel.countDocuments(query)
 
       return res.status(200).json({

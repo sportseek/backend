@@ -4,6 +4,7 @@ import { Request } from "express"
 
 import path from "path"
 import fs from "fs"
+import cloudinary from "cloudinary"
 
 export const getUserId = (req: Request) => {
   const authHeader = req.get("Authorization")
@@ -38,3 +39,37 @@ export const makeDir = (filePath: string) =>
   fs.existsSync(filePath)
     ? ""
     : fs.mkdir(filePath, () => console.log(filePath + " folder created"))
+
+export const uploadImage = async (imageFilePath: string) => {
+  const imageUrl = imageFilePath
+  let uploadedImageUrl = ""
+  let uploadImageId = ""
+
+  cloudinary.v2.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+  })
+
+  await cloudinary.v2.uploader
+    .upload(imageUrl, {
+      tags: "event_picture",
+    })
+    .then(function (image) {
+      if (image) {
+        console.log("image uploaded")
+        uploadedImageUrl = image.url
+        uploadImageId = image.public_id
+      }
+    })
+    .catch(function (error) {
+      console.log("error occured while uploading")
+      console.log(error)
+    })
+  clearImage(imageUrl)
+
+  return {
+    uploadedImageUrl,
+    uploadImageId
+  }
+}
