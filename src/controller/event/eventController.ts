@@ -179,8 +179,26 @@ export const fetchEventList = async (
 ) => {
   try {
     const userId = getUserId(req)
+    const searchParams: any = req.body
+    console.log("params", searchParams)
+    let query: any = {}
+    query.creator = userId
+
+    if (searchParams.eventTitle)
+      query.title = {
+        $regex: String(searchParams.eventTitle),
+        $options: "i",
+      }
+    if (searchParams.sportType) query.sportType = searchParams.sportType
+
+    if (searchParams.eventStartTime && searchParams.eventEndTime)
+      query.start = {
+        $gte: searchParams.eventStartTime,
+        $lte: searchParams.eventEndTime,
+      }
     if (userId) {
-      const events = await EventModel.find({ creator: userId })
+      const events = await EventModel.find(query)
+
       return res.status(200).json({
         success: true,
         eventList: events,
@@ -226,23 +244,29 @@ export const fetchAllEvents = async (
 
   let sort: any = {}
 
-  if(searchParams.sortBy && searchParams.sortValue) {
+  if (searchParams.sortBy && searchParams.sortValue) {
     sort = {
-      [searchParams.sortBy]: searchParams.sortValue
+      [searchParams.sortBy]: searchParams.sortValue,
     }
   }
   try {
     let events = await EventModel.find(query).sort(sort)
-    if(searchParams.location)
-    {
-      events=events.filter(item => item.location.lat<=searchParams.location.lat+2 && item.location.lat>=searchParams.location.lat-2)
+    if (searchParams.location) {
+      events = events.filter(
+        (item) =>
+          item.location.lat <= searchParams.location.lat + 2 &&
+          item.location.lat >= searchParams.location.lat - 2
+      )
 
-      events=events.filter(item => item.location.lng<=searchParams.location.lng+2 && item.location.lng>=searchParams.location.lng-2)
+      events = events.filter(
+        (item) =>
+          item.location.lng <= searchParams.location.lng + 2 &&
+          item.location.lng >= searchParams.location.lng - 2
+      )
     }
     return res.status(200).json({
       success: true,
       eventList: events,
-
     })
   } catch (err) {
     next(err)
@@ -422,7 +446,6 @@ export const getMinMaxDate = async (
   }
 }
 
-
 export const fetchAllEventsByCreator = async (
   req: Request,
   res: Response,
@@ -446,4 +469,3 @@ export const fetchAllEventsByCreator = async (
     next(err)
   }
 }
-

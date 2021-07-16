@@ -25,7 +25,7 @@ router.put("/update/:id", updateEvent)
 
 router.put("/cancel/:id", cancelEvent)
 
-router.get("/fetchEventList", fetchEventList)
+router.post("/fetchEventList", fetchEventList)
 
 router.post("/fetchAllEvents", selectUserModel, fetchAllEvents)
 
