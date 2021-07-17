@@ -10,7 +10,8 @@ export const createPEvent = async (
   next: NextFunction
 ) => {
   try {
-    const newEvent = new PEventModel(req.body)
+    const userId = getUserId(req)
+    const newEvent = new PEventModel({ ...req.body, creator: userId })
     const event = await newEvent.save()
 
     return res.status(200).json({
@@ -71,7 +72,7 @@ export const fetchAllPEvents = async (
   console.log("params", searchParams)
 
   try {
-    let query: any = {}
+    const query: any = {}
 
     if (searchParams.eventStartTime && searchParams.eventEndTime) {
       query.start = {

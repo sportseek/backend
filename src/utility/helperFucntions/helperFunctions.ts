@@ -70,6 +70,6 @@ export const uploadImage = async (imageFilePath: string) => {
 
   return {
     uploadedImageUrl,
-    uploadImageId
+    uploadImageId,
   }
 }
