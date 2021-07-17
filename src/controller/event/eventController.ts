@@ -181,6 +181,19 @@ export const cancelEvent = async (
     if (event) {
       if (userId === event.creator) {
         event.status = "cancelled"
+        
+        for (const playerId of event.registeredPlayers) {
+          const tempPlayer = await PlayerModel.findByIdAndUpdate(playerId, {
+            $inc: {
+              wallet: event.entryFee
+            }
+          }, {
+            new: true,
+            runValidators: true,
+          }).exec()
+        }
+        event.registeredPlayers = []
+        event.interestedPlayers = []
 
         const result = await event.save()
         return res.status(200).json({
