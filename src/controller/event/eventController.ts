@@ -257,6 +257,9 @@ export const fetchAllEvents = async (
   next: NextFunction
 ) => {
   const searchParams: any = req.body
+  const pageSize = req.body.pageSize
+  const pageNumber = req.body.pageNumber
+  const skipItems = (pageNumber - 1) * pageSize
   console.log("params", searchParams)
   let query: any = {}
   if (searchParams.eventTitle)
