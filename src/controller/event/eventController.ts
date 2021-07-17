@@ -7,6 +7,11 @@ import {
   uploadImage,
 } from "../../utility/helperFucntions/helperFunctions"
 import { createNotification } from "../notification/notificationController"
+import Stripe from "stripe"
+
+import dotenv from "dotenv"
+
+dotenv.config()
 
 export const findById = async (
   req: Request,
@@ -176,6 +181,19 @@ export const cancelEvent = async (
     if (event) {
       if (userId === event.creator) {
         event.status = "cancelled"
+        
+        for (const playerId of event.registeredPlayers) {
+          const tempPlayer = await PlayerModel.findByIdAndUpdate(playerId, {
+            $inc: {
+              wallet: event.entryFee
+            }
+          }, {
+            new: true,
+            runValidators: true,
+          }).exec()
+        }
+        event.registeredPlayers = []
+        event.interestedPlayers = []
 
         const result = await event.save()
         return res.status(200).json({
@@ -383,6 +401,7 @@ export const updateRegistered = async (
     const userId = getUserId(req)
     const registered = req.body.registered
     const fee = req.body.fee
+    const withWallet = req.body.withWallet
     const player = await PlayerModel.findById(userId)
     const event = await EventModel.findById(req.params.id)
 
@@ -391,6 +410,9 @@ export const updateRegistered = async (
         player.registeredEvents.push(event._id)
         event.registeredPlayers.push(player._id)
         event.revenue += fee
+        if (withWallet) {
+          player.wallet -= fee
+        }
       } else {
         player.registeredEvents = player.registeredEvents.filter(
           (item) => item != event._id
@@ -398,6 +420,7 @@ export const updateRegistered = async (
         event.registeredPlayers = event.registeredPlayers.filter(
           (item) => item != userId
         )
+        player.wallet += (+(fee * 0.99).toFixed(2))
         event.revenue -= fee
         event.revenue < 0 ? (event.revenue = 0) : event.revenue
       }
@@ -411,7 +434,7 @@ export const updateRegistered = async (
         event._id,
         next
       )
-
+      
       if (notify) {
         const res1 = await player.save()
         const res2 = await event.save()
@@ -540,13 +563,36 @@ export const inviteFriends = async (
         success: true,
         message: "Players invited successfully",
       })
-      
     } else {
       return res.status(422).json({
         success: false,
         error: "Could not the invite friends",
       })
     }
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const createPaymentIntent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const amount = req.body.amount
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+    apiVersion: "2020-08-27",
+  })
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: "eur",
+    })
+
+    return res.status(200).json({
+      success: true,
+      secretKey: paymentIntent.client_secret,
+    })
   } catch (err) {
     next(err)
   }
