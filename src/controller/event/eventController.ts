@@ -385,6 +385,7 @@ export const updateRegistered = async (
     const userId = getUserId(req)
     const registered = req.body.registered
     const fee = req.body.fee
+    const withWallet = req.body.withWallet
     const player = await PlayerModel.findById(userId)
     const event = await EventModel.findById(req.params.id)
 
@@ -393,6 +394,9 @@ export const updateRegistered = async (
         player.registeredEvents.push(event._id)
         event.registeredPlayers.push(player._id)
         event.revenue += fee
+        if (withWallet) {
+          player.wallet -= fee
+        }
       } else {
         player.registeredEvents = player.registeredEvents.filter(
           (item) => item != event._id
@@ -400,6 +404,7 @@ export const updateRegistered = async (
         event.registeredPlayers = event.registeredPlayers.filter(
           (item) => item != userId
         )
+        player.wallet += (+(fee * 0.99).toFixed(2))
         event.revenue -= fee
         event.revenue < 0 ? (event.revenue = 0) : event.revenue
       }
@@ -413,7 +418,7 @@ export const updateRegistered = async (
         event._id,
         next
       )
-
+      
       if (notify) {
         const res1 = await player.save()
         const res2 = await event.save()
