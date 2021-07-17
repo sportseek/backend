@@ -124,7 +124,8 @@ export const updateEvent = async (
             player,
             "eventUpdated",
             `${arenaOwner.arenaName} has updated the event ${updatedEvent.title}`,
-            false,
+            "arenaToPlayer",
+            updatedEvent._id,
             next
           )
         }
@@ -135,7 +136,8 @@ export const updateEvent = async (
             player,
             "eventUpdated",
             `${arenaOwner.arenaName} has updated the event ${updatedEvent.title}`,
-            false,
+            "arenaToPlayer",
+            updatedEvent._id,
             next
           )
         }
@@ -337,7 +339,8 @@ export const updateInterested = async (
         event.creator,
         "interested",
         `${player.firstName} ${player.lastName} is interested in ${event.title}`,
-        true,
+        "playerToArena",
+        event._id,
         next
       )
       if (notify) {
@@ -401,7 +404,8 @@ export const updateRegistered = async (
         event.creator,
         "registered",
         `${player.firstName} ${player.lastName} has registered for ${event.title}`,
-        true,
+        "playerToArena",
+        event._id,
         next
       )
 
@@ -498,6 +502,46 @@ export const fetchAllEventsByCreator = async (
       return res.status(422).json({
         success: false,
         error: "Could not find the user for the arena",
+      })
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const inviteFriends = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const friendsIds = req.body.friendsIds
+  const userId = getUserId(req)
+  const eventId = req.body.eventId
+  const user = await PlayerModel.findById(userId)
+  const event = await EventModel.findById(eventId)
+  try {
+    if (friendsIds.length > 0 && user && event) {
+      for (const player of friendsIds) {
+        const notifyForInterested = await createNotification(
+          userId,
+          player,
+          "eventInvitation",
+          `${user.firstName} has invited you to the event ${event.title}`,
+          "playerToPlayer",
+          event._id,
+          next
+        )
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Players invited successfully",
+      })
+      
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not the invite friends",
       })
     }
   } catch (err) {
