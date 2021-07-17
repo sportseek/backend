@@ -12,6 +12,7 @@ import {
   getMinMaxDate,
   fetchAllEventsByCreator,
   inviteFriends,
+  createPaymentIntent,
 } from "../controller/event/eventController"
 
 import selectUserModel from "../middleware/selectUser"
@@ -40,5 +41,7 @@ router.get("/getMinMaxDate", getMinMaxDate)
 router.post("/fetchAllEventsByCreator/", fetchAllEventsByCreator)
 
 router.post("/inviteFriends", inviteFriends)
+
+router.post("/createPaymentIntent", createPaymentIntent)
 
 export default router

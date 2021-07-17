@@ -7,6 +7,11 @@ import {
   uploadImage,
 } from "../../utility/helperFucntions/helperFunctions"
 import { createNotification } from "../notification/notificationController"
+import Stripe from "stripe"
+
+import dotenv from "dotenv"
+
+dotenv.config()
 
 export const findById = async (
   req: Request,
@@ -537,13 +542,36 @@ export const inviteFriends = async (
         success: true,
         message: "Players invited successfully",
       })
-      
     } else {
       return res.status(422).json({
         success: false,
         error: "Could not the invite friends",
       })
     }
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const createPaymentIntent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const amount = req.body.amount
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+    apiVersion: "2020-08-27",
+  })
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: "eur",
+    })
+
+    return res.status(200).json({
+      success: true,
+      secretKey: paymentIntent.client_secret,
+    })
   } catch (err) {
     next(err)
   }
