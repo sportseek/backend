@@ -181,16 +181,20 @@ export const cancelEvent = async (
     if (event) {
       if (userId === event.creator) {
         event.status = "cancelled"
-        
+
         for (const playerId of event.registeredPlayers) {
-          const tempPlayer = await PlayerModel.findByIdAndUpdate(playerId, {
-            $inc: {
-              wallet: event.entryFee
+          const tempPlayer = await PlayerModel.findByIdAndUpdate(
+            playerId,
+            {
+              $inc: {
+                wallet: event.entryFee,
+              },
+            },
+            {
+              new: true,
+              runValidators: true,
             }
-          }, {
-            new: true,
-            runValidators: true,
-          }).exec()
+          ).exec()
         }
         event.registeredPlayers = []
         event.interestedPlayers = []
@@ -230,7 +234,7 @@ export const fetchEventList = async (
     const pageNumber = req.body.pageNumber
     const skipItems = (pageNumber - 1) * pageSize
 
-    console.log("params", searchParams)
+    // console.log("params", searchParams)
     let query: any = {}
     query.creator = userId
 
@@ -275,7 +279,7 @@ export const fetchAllEvents = async (
   next: NextFunction
 ) => {
   const searchParams: any = req.body
-  console.log("params", searchParams)
+  // console.log("params", searchParams)
   let query: any = {}
   if (searchParams.eventTitle)
     query.title = {
@@ -295,7 +299,7 @@ export const fetchAllEvents = async (
       $gte: searchParams.eventFee[0],
       $lte: searchParams.eventFee[1],
     }
-  console.log(query)
+  //console.log(query)
 
   let sort: any = {}
 
@@ -409,6 +413,7 @@ export const updateRegistered = async (
         event.revenue += fee
         if (withWallet) {
           player.wallet -= fee
+          player.wallet < 0 ? (player.wallet = 0) : player.wallet
         }
       } else {
         player.registeredEvents = player.registeredEvents.filter(
@@ -417,7 +422,7 @@ export const updateRegistered = async (
         event.registeredPlayers = event.registeredPlayers.filter(
           (item) => item != userId
         )
-        player.wallet += (+(fee * 0.99).toFixed(2))
+        player.wallet += +(fee * 0.99).toFixed(2)
         event.revenue -= fee
         event.revenue < 0 ? (event.revenue = 0) : event.revenue
       }
@@ -431,7 +436,7 @@ export const updateRegistered = async (
         event._id,
         next
       )
-      
+
       if (notify) {
         const res1 = await player.save()
         const res2 = await event.save()
@@ -591,6 +596,57 @@ export const createPaymentIntent = async (
       secretKey: paymentIntent.client_secret,
     })
   } catch (err) {
+    next(err)
+  }
+}
+
+export const regConflict = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const eventSearchId = req.params.eventId
+
+    const event = await EventModel.findById(eventSearchId)
+    const player = await PlayerModel.findById(userId)
+    let eventConflict: boolean = false
+    //console.log(event)
+
+    if (player && event) {
+      for (const eventId of player.registeredEvents) {
+        const regEvent = await EventModel.findById(eventId)
+        if (
+          regEvent &&
+          regEvent.start &&
+          regEvent.end &&
+          event.start &&
+          event.end
+        ) {
+          if (
+            regEvent.id !== event.id &&
+            regEvent.start <= event.end &&
+            regEvent.end >= event.start
+          ) {
+            console.log("reg", regEvent._id, "eve", event._id)
+            eventConflict = true
+            break
+          }
+        }
+      }
+      return res.status(200).json({
+        success: true,
+        eventConflict: eventConflict,
+      })
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not find the user and event",
+      })
+    }
+  } catch (err) {
+    console.log(err)
     next(err)
   }
 }
