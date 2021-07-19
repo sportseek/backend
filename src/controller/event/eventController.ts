@@ -8,8 +8,9 @@ import {
 } from "../../utility/helperFucntions/helperFunctions"
 import { createNotification } from "../notification/notificationController"
 import Stripe from "stripe"
-
 import dotenv from "dotenv"
+import formatValidationErrors from "../../utility/formValidator"
+import { Error } from "mongoose"
 
 dotenv.config()
 
@@ -79,6 +80,10 @@ export const createEvent = async (
     }
   } catch (err) {
     console.log(err)
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err)
+      return res.status(422).json(errorResponse)
+    }
     next(err)
   }
 }
@@ -165,6 +170,10 @@ export const updateEvent = async (
     }
   } catch (err) {
     console.log(err)
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err)
+      return res.status(422).json(errorResponse)
+    }
     next(err)
   }
 }
@@ -181,16 +190,20 @@ export const cancelEvent = async (
     if (event) {
       if (userId === event.creator) {
         event.status = "cancelled"
-        
+
         for (const playerId of event.registeredPlayers) {
-          const tempPlayer = await PlayerModel.findByIdAndUpdate(playerId, {
-            $inc: {
-              wallet: event.entryFee
+          const tempPlayer = await PlayerModel.findByIdAndUpdate(
+            playerId,
+            {
+              $inc: {
+                wallet: event.entryFee,
+              },
+            },
+            {
+              new: true,
+              runValidators: true,
             }
-          }, {
-            new: true,
-            runValidators: true,
-          }).exec()
+          ).exec()
         }
         event.registeredPlayers = []
         event.interestedPlayers = []
@@ -420,7 +433,7 @@ export const updateRegistered = async (
         event.registeredPlayers = event.registeredPlayers.filter(
           (item) => item != userId
         )
-        player.wallet += (+(fee * 0.99).toFixed(2))
+        player.wallet += +(fee * 0.99).toFixed(2)
         event.revenue -= fee
         event.revenue < 0 ? (event.revenue = 0) : event.revenue
       }
@@ -434,7 +447,7 @@ export const updateRegistered = async (
         event._id,
         next
       )
-      
+
       if (notify) {
         const res1 = await player.save()
         const res2 = await event.save()
