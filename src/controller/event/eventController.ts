@@ -335,9 +335,19 @@ export const fetchAllEvents = async (
           item.location.lng >= searchParams.location.lng - 2
       )
     }
+    let totalEvents = events.length
+    const start=0+pageSize*(pageNumber-1)
+    let end=0
+    if((start+pageSize)===(totalEvents-1)){
+      end = totalEvents-1
+    }
+    else{
+      end = start+pageSize
+    }
     return res.status(200).json({
       success: true,
-      eventList: events,
+      eventList: events.slice(start+1,end+1),
+      totalEvents
     })
   } catch (err) {
     next(err)
