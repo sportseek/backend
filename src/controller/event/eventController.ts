@@ -243,7 +243,7 @@ export const fetchEventList = async (
     const pageNumber = req.body.pageNumber
     const skipItems = (pageNumber - 1) * pageSize
 
-    console.log("params", searchParams)
+    // console.log("params", searchParams)
     let query: any = {}
     query.creator = userId
 
@@ -288,7 +288,7 @@ export const fetchAllEvents = async (
   next: NextFunction
 ) => {
   const searchParams: any = req.body
-  console.log("params", searchParams)
+  // console.log("params", searchParams)
   let query: any = {}
   if (searchParams.eventTitle)
     query.title = {
@@ -308,7 +308,7 @@ export const fetchAllEvents = async (
       $gte: searchParams.eventFee[0],
       $lte: searchParams.eventFee[1],
     }
-  console.log(query)
+  //console.log(query)
 
   let sort: any = {}
 
@@ -422,6 +422,7 @@ export const updateRegistered = async (
         event.revenue += fee
         if (withWallet) {
           player.wallet -= fee
+          player.wallet < 0 ? (player.wallet = 0) : player.wallet
         }
       } else {
         player.registeredEvents = player.registeredEvents.filter(
@@ -528,8 +529,17 @@ export const fetchAllEventsByCreator = async (
 ) => {
   try {
     const creatorId = req.body.creator
+    const eventStartTime = req.body.eventStartTime
+    let query: any = {}
+
+    if (eventStartTime)
+      query.start = {
+        $gte: eventStartTime,
+      }
+    if (creatorId) query.creator = creatorId
+
     if (creatorId) {
-      const events = await EventModel.find({ creator: creatorId })
+      const events = await EventModel.find(query).sort({ start: 1 }).limit(4)
       return res.status(200).json({
         success: true,
         eventList: events,
@@ -604,6 +614,56 @@ export const createPaymentIntent = async (
       secretKey: paymentIntent.client_secret,
     })
   } catch (err) {
+    next(err)
+  }
+}
+
+export const regConflict = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = getUserId(req)
+    const eventSearchId = req.params.eventId
+
+    const event = await EventModel.findById(eventSearchId)
+    const player = await PlayerModel.findById(userId)
+    let eventConflict: boolean = false
+    //console.log(event)
+
+    if (player && event) {
+      for (const eventId of player.registeredEvents) {
+        const regEvent = await EventModel.findById(eventId)
+        if (
+          regEvent &&
+          regEvent.start &&
+          regEvent.end &&
+          event.start &&
+          event.end
+        ) {
+          if (
+            regEvent.id !== event.id &&
+            regEvent.start <= event.end &&
+            regEvent.end >= event.start
+          ) {
+            eventConflict = true
+            break
+          }
+        }
+      }
+      return res.status(200).json({
+        success: true,
+        eventConflict: eventConflict,
+      })
+    } else {
+      return res.status(422).json({
+        success: false,
+        error: "Could not find the user and event",
+      })
+    }
+  } catch (err) {
+    console.log(err)
     next(err)
   }
 }

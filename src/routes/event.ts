@@ -13,6 +13,7 @@ import {
   fetchAllEventsByCreator,
   inviteFriends,
   createPaymentIntent,
+  regConflict,
 } from "../controller/event/eventController"
 
 import selectUserModel from "../middleware/selectUser"
@@ -43,5 +44,7 @@ router.post("/fetchAllEventsByCreator/", fetchAllEventsByCreator)
 router.post("/inviteFriends", inviteFriends)
 
 router.post("/createPaymentIntent", createPaymentIntent)
+
+router.post("/regConflict/:eventId", regConflict)
 
 export default router
