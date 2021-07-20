@@ -288,7 +288,10 @@ export const fetchAllEvents = async (
   next: NextFunction
 ) => {
   const searchParams: any = req.body
-  // console.log("params", searchParams)
+  const pageSize = req.body.pageSize
+  const pageNumber = req.body.pageNumber
+  const skipItems = (pageNumber - 1) * pageSize
+  console.log("params", searchParams)
   let query: any = {}
   if (searchParams.eventTitle)
     query.title = {
@@ -308,8 +311,6 @@ export const fetchAllEvents = async (
       $gte: searchParams.eventFee[0],
       $lte: searchParams.eventFee[1],
     }
-  //console.log(query)
-
   let sort: any = {}
 
   if (searchParams.sortBy && searchParams.sortValue) {
@@ -332,9 +333,20 @@ export const fetchAllEvents = async (
           item.location.lng >= searchParams.location.lng - 2
       )
     }
+    let totalEvents = events.length
+    const start=0+pageSize*(pageNumber-1)
+    let end=0
+    if((start+pageSize)===(totalEvents-1)){
+      end = totalEvents-1
+    }
+    else{
+      end = start+pageSize
+    }
+
     return res.status(200).json({
       success: true,
-      eventList: events,
+      eventList: events.slice(start,end),
+      totalEvents
     })
   } catch (err) {
     next(err)
