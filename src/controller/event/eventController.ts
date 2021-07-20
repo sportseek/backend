@@ -344,9 +344,10 @@ export const fetchAllEvents = async (
     else{
       end = start+pageSize
     }
+
     return res.status(200).json({
       success: true,
-      eventList: events.slice(start+1,end+1),
+      eventList: events.slice(start,end),
       totalEvents
     })
   } catch (err) {
