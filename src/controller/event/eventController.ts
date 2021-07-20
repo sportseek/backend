@@ -520,8 +520,17 @@ export const fetchAllEventsByCreator = async (
 ) => {
   try {
     const creatorId = req.body.creator
+    const eventStartTime = req.body.eventStartTime
+    let query: any = {}
+
+    if (eventStartTime)
+      query.start = {
+        $gte: eventStartTime,
+      }
+    if (creatorId) query.creator = creatorId
+
     if (creatorId) {
-      const events = await EventModel.find({ creator: creatorId })
+      const events = await EventModel.find(query).sort({ start: 1 }).limit(4)
       return res.status(200).json({
         success: true,
         eventList: events,
@@ -629,7 +638,6 @@ export const regConflict = async (
             regEvent.start <= event.end &&
             regEvent.end >= event.start
           ) {
-            console.log("reg", regEvent._id, "eve", event._id)
             eventConflict = true
             break
           }
