@@ -8,8 +8,9 @@ import {
 } from "../../utility/helperFucntions/helperFunctions"
 import { createNotification } from "../notification/notificationController"
 import Stripe from "stripe"
-
 import dotenv from "dotenv"
+import formatValidationErrors from "../../utility/formValidator"
+import { Error } from "mongoose"
 
 dotenv.config()
 
@@ -79,6 +80,10 @@ export const createEvent = async (
     }
   } catch (err) {
     console.log(err)
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err)
+      return res.status(422).json(errorResponse)
+    }
     next(err)
   }
 }
@@ -165,6 +170,10 @@ export const updateEvent = async (
     }
   } catch (err) {
     console.log(err)
+    if (err instanceof Error.ValidationError) {
+      const errorResponse = formatValidationErrors(err)
+      return res.status(422).json(errorResponse)
+    }
     next(err)
   }
 }
