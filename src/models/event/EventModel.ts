@@ -22,7 +22,13 @@ interface IEvent extends CalenderEvent {
 const EventSchema = new Schema<IEvent>({
   creator: { type: String, required: true },
   location: { type: LocationSchema, required: true },
-  description: { type: String, default: "", required: true },
+  description: {
+    type: String,
+    default: "",
+    requried: [true, "description required"],
+    minLength: [4, `Minimum length ${4}`],
+    maxLength: [256, `Minimum length ${256}`],
+  },
   sportType: { type: String, default: "", required: true },
   entryFee: { type: Number, default: 0, required: true },
   minPlayers: { type: Number, default: 0, required: true },
@@ -32,7 +38,12 @@ const EventSchema = new Schema<IEvent>({
   revenue: { type: Number, default: 0, required: true },
   address: { type: AddressSchema, required: false },
   allDay: Boolean,
-  title: { type: String, required: true },
+  title: {
+    type: String,
+    requried: [true, "title required"],
+    minLength: [4, `Minimum length ${4}`],
+    maxLength: [256, `Minimum length ${256}`],
+  },
   start: { type: Date, default: Date.now, required: true },
   end: { type: Date, default: Date.now, required: true },
   status: { type: String, required: true },

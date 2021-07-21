@@ -15,6 +15,9 @@ import cors from "cors"
 
 import { makeDir } from "./utility/helperFucntions/helperFunctions"
 
+import * as schedule from "node-schedule"
+import { updateEventsStatus } from "./utility/jobs/eventJobs"
+
 dotenv.config()
 
 const app: Application = express().use(cors())
@@ -100,5 +103,11 @@ mongoose
   .then((result) => {
     console.log("server running")
     app.listen(process.env.PORT || 5000)
+
+    const rule = new schedule.RecurrenceRule()
+    rule.minute = 59
+    const eventUpdateJob = schedule.scheduleJob(rule, function () {
+      updateEventsStatus()
+    })
   })
   .catch((err) => console.log(err))

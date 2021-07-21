@@ -11,6 +11,9 @@ import {
   getMinMaxPrice,
   getMinMaxDate,
   fetchAllEventsByCreator,
+  inviteFriends,
+  createPaymentIntent,
+  regConflict,
 } from "../controller/event/eventController"
 
 import selectUserModel from "../middleware/selectUser"
@@ -25,7 +28,7 @@ router.put("/update/:id", updateEvent)
 
 router.put("/cancel/:id", cancelEvent)
 
-router.get("/fetchEventList", fetchEventList)
+router.post("/fetchEventList", fetchEventList)
 
 router.post("/fetchAllEvents", selectUserModel, fetchAllEvents)
 
@@ -37,5 +40,11 @@ router.get("/getMinMaxPrice", getMinMaxPrice)
 
 router.get("/getMinMaxDate", getMinMaxDate)
 router.post("/fetchAllEventsByCreator/", fetchAllEventsByCreator)
+
+router.post("/inviteFriends", inviteFriends)
+
+router.post("/createPaymentIntent", createPaymentIntent)
+
+router.post("/regConflict/:eventId", regConflict)
 
 export default router

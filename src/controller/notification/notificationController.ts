@@ -9,11 +9,12 @@ export const createNotification = async (
   receiverId: string,
   type: string,
   description: string,
-  playerToArena: boolean,
+  direction: string,
+  eventId: SVGFESpecularLightingElement,
   next: NextFunction
 ) => {
   try {
-    if (playerToArena) {
+    if (direction === "playerToArena") {
       const creator = await Player.findById(creatorId)
       const receiver = await Arena.findById(receiverId)
 
@@ -27,13 +28,14 @@ export const createNotification = async (
           description: description,
           createdAt: new Date().toISOString(),
           unreadStatus: true,
+          eventId,
         })
 
         const result = await notification.save()
         if (result) return true
         else return false
       }
-    } else {
+    } else if(direction === "arenaToPlayer") {
       const creator = await Arena.findById(creatorId)
       const receiver = await Player.findById(receiverId)
 
@@ -47,6 +49,29 @@ export const createNotification = async (
           description: description,
           createdAt: new Date().toISOString(),
           unreadStatus: true,
+          eventId,
+        })
+
+        const result = await notification.save()
+        if (result) return true
+        else return false
+      }
+    }
+    else if(direction === "playerToPlayer") {
+      const creator = await Player.findById(creatorId)
+      const receiver = await Player.findById(receiverId)
+
+      if (creator && receiver) {
+        const notification = new NotificationModel({
+          creatorId: creatorId,
+          creatorName: creator.firstName,
+          receiverId: receiverId,
+          receiverName: `${receiver.firstName} ${receiver.lastName}`,
+          type: type,
+          description: description,
+          createdAt: new Date().toISOString(),
+          unreadStatus: true,
+          eventId,
         })
 
         const result = await notification.save()

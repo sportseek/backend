@@ -9,6 +9,7 @@ interface INotification {
   description: string
   createdAt: Date
   unreadStatus: boolean
+  eventId: string
 }
 
 const NotificationSchema = new Schema<INotification>({
@@ -20,6 +21,7 @@ const NotificationSchema = new Schema<INotification>({
   description: { type: String, required: true },
   createdAt: { type: Date, required: true },
   unreadStatus: { type: Boolean, required: true },
+  eventId: { type: String, required: true },
 })
 
 const NotificationModel = model<INotification>(
