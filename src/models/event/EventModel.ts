@@ -27,7 +27,7 @@ const EventSchema = new Schema<IEvent>({
     default: "",
     requried: [true, "description required"],
     minLength: [4, `Minimum length ${4}`],
-    maxLength: [256, `Minimum length ${256}`],
+    maxLength: [5000, `Maximum length ${5000}`],
   },
   sportType: { type: String, default: "", required: true },
   entryFee: {
@@ -57,7 +57,7 @@ const EventSchema = new Schema<IEvent>({
     type: String,
     requried: [true, "title required"],
     minLength: [4, `Minimum length ${4}`],
-    maxLength: [256, `Minimum length ${256}`],
+    maxLength: [256, `Maximum length ${256}`],
   },
   start: { type: Date, default: Date.now, required: true },
   end: { type: Date, default: Date.now, required: true },

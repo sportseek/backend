@@ -31,14 +31,14 @@ export const ArenaSchema = new mongoose.Schema({
     type: String,
     requried: [true, "Arena name required"],
     minLength: [ARENA_NAME_MIN, `Minimum length ${ARENA_NAME_MIN}`],
-    maxLength: [ARENA_NAME_MAX, `Minimum length ${ARENA_NAME_MAX}`],
+    maxLength: [ARENA_NAME_MAX, `Maximum length ${ARENA_NAME_MAX}`],
   },
   email: {
     type: String,
     unqiue: true,
     requried: [true, "Email required"],
     minLength: [ARENA_EMAIL_MIN, `Minimum length ${ARENA_EMAIL_MIN}`],
-    maxLength: [ARENA_EMAIL_MAX, `Minimum length ${ARENA_EMAIL_MAX}`],
+    maxLength: [ARENA_EMAIL_MAX, `Maximum length ${ARENA_EMAIL_MAX}`],
   },
   password: {
     type: String,
