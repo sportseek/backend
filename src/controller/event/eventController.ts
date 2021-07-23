@@ -323,14 +323,14 @@ export const fetchAllEvents = async (
     if (searchParams.location) {
       events = events.filter(
         (item) =>
-          item.location.lat <= searchParams.location.lat + 2 &&
-          item.location.lat >= searchParams.location.lat - 2
+          item.location.lat <= searchParams.location.lat + 0.1 &&
+          item.location.lat >= searchParams.location.lat - 0.1
       )
 
       events = events.filter(
         (item) =>
-          item.location.lng <= searchParams.location.lng + 2 &&
-          item.location.lng >= searchParams.location.lng - 2
+          item.location.lng <= searchParams.location.lng + 0.1 &&
+          item.location.lng >= searchParams.location.lng - 0.1
       )
     }
     let totalEvents = events.length
